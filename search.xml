@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Docker解析</title>
+    <url>/2018/02/19/Docker%E8%A7%A3%E6%9E%90/</url>
+    <content><![CDATA[<hr>
+<h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><p>通过上一篇博客，我们大概知道docker是怎么玩的了。下面我们进一步来对docker进行解析。</p>
+<a id="more"></a>
+
+<h1 id="不一样的Docker"><a href="#不一样的Docker" class="headerlink" title="不一样的Docker"></a>不一样的Docker</h1><p>我这里也只能很简单的列一下目前这个阶段我们很容发现的几点：</p>
+<ul>
+<li>docker image的体积非常的小，注意看下之前我们用到的几个image的size，一个完整功能的ubuntu才100多mb。docker image如此小的体积，让我们可以方便的在网络上传输和分享，对于公司来说就提供了对大量image的管理和分发的可能。</li>
+<li>docker的系统启动的耗时为0.如果大家已经尝试启动hello-world就知道，<code>docker run hello-world</code>的命令是瞬间完成的，你并没有感觉到加载image、启动系统的耗时，命令完成后就直接输出了结果。程序执行完成后container也跟着关闭，也并没有保存镜像的时间，但下次再运行还是会保留你处理过的状态。</li>
+<li>docker系统占用的资源极少，我们知道如果我们开启了一个VM的系统，不论是linux还是windows，就算什么都不运行也会占用一部分内存，但docker container启动后如果不运行程序，你是看不到系统资源被占用的。</li>
+</ul>
+<p>这些特点是不是完全和VM不同？并且有了这些特点，是不是很多之前没有的应用场景就会产生？比如，我们可以吧一个项目build成一个image，然后方便地分发出去，<strong>别人拿到后也不用关心你的项目需要什么环境或依赖，只要docker run一下就能运行</strong>。而且速度很快，我们可以管理成百上千的container，没有业务处理的时候也不会占用的系统资源。</p>
+<h1 id="Docker是如何做到的"><a href="#Docker是如何做到的" class="headerlink" title="Docker是如何做到的"></a>Docker是如何做到的</h1><p>我们先思考一下，一台服务器给我们开发的项目到底提供了哪些能力让他运行起来呢？cpu、内存、硬盘、网络、操作系统、工具软件还有项目的运行环境（jre等）。当具备了这些能力的机器，我们会说这台机器给项目提供了可以运行的环境。</p>
+<p>我们知道VM技术可以将一台物理机器部署为多台虚拟机器，解决了很多物力资源的浪费以及方便的管理能力。那么VM是怎么做到的呢？关键词：<strong>Hypervisor</strong>，VM在物理机器的操作系统上建立了一个中间软件层Hypervisor，Hypervisor利用物理机器的资源，虚拟出多个新虚拟的硬件环境，这些硬件环境可以共享宿主机的资源。这些新的虚拟的硬件环境，安装操作系统和相应的软件后便形成了一台台的虚拟机器。</p>
+<p>那么Docker有什么不同呢？Docker很聪明的利用linux的一些技术走了一条捷径：Docker选择了和虚拟化完全不同的思路，并不去虚拟化任何硬件，而是对硬件资源在不同的docker container之间做了 <strong>“隔离”</strong> 。隔离使每个docker container之间拥有了不同的环境（硬盘空间、网络、系统的工具包），并且又可以共享需要的硬件资源（cpu、内存、系统内核），达到了和虚拟机能提供的同样的功能。<br><img src="http://oxtgpqjno.bkt.clouddn.com/ba6d92b3ee037c9ed576f47ae5edf091.jpg" alt="此处输入图片的描述"></p>
+<h1 id="Docker入门指南"><a href="#Docker入门指南" class="headerlink" title="Docker入门指南"></a>Docker入门指南</h1>]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Docker初体验</title>
+    <url>/2018/02/15/Docker%E5%88%9D%E4%BD%93%E9%AA%8C/</url>
+    <content><![CDATA[<hr>
+<h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><p>这学期有机会接触了一些深度学习方面的知识，虽说即将就要踏上自娱自乐的网络之路了，面对当下如此火热的炼丹行业，兴趣广泛的我自然也是要一窥究竟。</p>
+<a id="more"></a>
+
+<p>在部署炼丹环境时，偶然接触到了Docker，了解到Docker是今年来非常火的容器技术，顺便也就学习了一波，毕竟技多不压身啊！其实对于一项技术，学习最直接的方式就是去它的官网上进行学习，docker也不例外，在其官网上有详细的学习资料，唯一的障碍可能就是语言关了，鼓励英语好的同志直接移步其官网进行学习: <a href="https://docs.docker.com/" target="_blank" rel="noopener">https://docs.docker.com/</a>。</p>
+<p>这篇文章是我边学习边写下的，我也是docker的初学者，并没有丰富的使用经验，所以内容若有不妥，请大家指正，希望日后能不断完善。</p>
+<h1 id="什么是Docker"><a href="#什么是Docker" class="headerlink" title="什么是Docker"></a>什么是Docker</h1><p>Docker用Go语言开发实现，基于Linux内核的cgroup，namespace，和AUFS类的Union FS等技术，对进程进行封装隔离，属于操作系统层面的虚拟化技术。由于隔离的进程独立于宿主和其它的隔离的进程，因此也称其为容器。Docker 在容器的基础上，进行了进一步的封装，从文件系统、网络互联到进程隔离等等，极大的简化了容器的创建和维护。使得 Docker 技术比虚拟机技术更为轻便、快捷。</p>
+<h1 id="Docker概念"><a href="#Docker概念" class="headerlink" title="Docker概念"></a>Docker概念</h1><p>Docker是开发人员和系统管理员使用容器<strong>开发、部署和运行应用程序</strong>的平台。使用Linux容器来部署应用程序成为<strong>集装箱化</strong>。容器不是新的，但他们用于轻松部署应用程序。<br>Docker由下面几样东西组成，先简单认识一下：</p>
+<ul>
+<li><strong>Docker Client</strong>：Docker提供给用户的客户端。Docker Client提供给用户一个终端，用户输入Docker提供的命令来管理本地或者远程的服务器。</li>
+<li><strong>Docker Daemon</strong>：Docker服务的守护进程。每台服务器（物理机或虚拟机）上只要安装了Docker的环境，基本上就跑了一个后台程序Docker Daemon，Docker Daemon会接收Docker Client发过来的指令,并对服务器的进行具体操作。</li>
+<li><strong>Docker Images</strong>：俗称Docker的镜像，一个独立的文件系统，类似虚拟机里的镜像，包含运行时需要的系统、软件、代码、库、环境变量、配置文件等。</li>
+<li><strong>Docker Registry</strong>：这个可认为是Docker Images的仓库，就像git的仓库一样，用来管理Docker镜像的，提供了Docker镜像的上传、下载和浏览等功能，并且提供安全的账号管理可以管理只有自己可见的私人image。就像git的仓库一样，docker也提供了官方的Registry，叫做<strong>Dock Hub</strong>(<a href="http://hub.Docker.com" target="_blank" rel="noopener">http://hub.Docker.com</a>)</li>
+<li><strong>Docker Container</strong>：俗称Docker的容器，这个是最关键的东西了。Docker Container是真正跑项目程序、消耗机器资源、提供服务的地方，Docker Container通过Docker Images启动，在Docker Images的基础上运行你需要的代码。 你<strong>可以认为Docker Container提供了系统硬件环境，然后使用了Docker Images这些制作好的系统盘，再加上你的项目代码，跑起来就可以提供服务了。</strong> 听到这里，可能你会觉得是不是有点像一个VM利用保存的备份或者快照跑起来环境一样，其实是挺像的，但是实际上是有本质的区别，之后会提到。</li>
+</ul>
+<h1 id="镜像和容器"><a href="#镜像和容器" class="headerlink" title="镜像和容器"></a>镜像和容器</h1><p>容器通过运行镜像来启动。<strong>镜像</strong>是一个可执行程序包，其中包含运行应用程序所需的所有内容-the code, a runtime, libraries, environment variables, and configuration files。</p>
+<p><strong>容器</strong>是镜像runtime实例-执行时镜像在内存中的内容(即具有状态或用户进程的镜像)。你可以使用命令<code>docker ps</code>查看正在运行的容器的列表，就像在Linux中一样。</p>
+<h1 id="容器和虚拟机"><a href="#容器和虚拟机" class="headerlink" title="容器和虚拟机"></a>容器和虚拟机</h1><p>一个<strong>容器</strong>在Linux上本地运行，并与其它容器共享主机的内核(共享同一个操作系统)。它运行一个独立的进程，不占用任何其它可执行文件的内存，使其轻量化。</p>
+<p>相比之下，<strong>虚拟机</strong>(VM)运行一个完整的“guest”操作系统，通过虚拟机管理程序虚拟访问主机资源。一般来说，虚拟机提供的环境比大多数应用程序需要的资源更多。<br><img src="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180215162524.png" alt="此处输入图片的描述"></p>
+<h1 id="Docker是怎么玩的？"><a href="#Docker是怎么玩的？" class="headerlink" title="Docker是怎么玩的？"></a>Docker是怎么玩的？</h1><p>一下接触这么多东西肯定有一些晕吧，没关系，我们把这些串起来走一遍就会了。</p>
+<ol>
+<li>首先你得安装一下docker的环境，针对你的系统安装对应的版本，具体查看docker的官网<a href="http://www.docker.com/products/docker" target="_blank" rel="noopener">http://www.docker.com/products/docker</a>。(我是在windows平台上进行学习的)</li>
+<li>安装好后，我们在terminal中就有了docker的命令了，所有的操作都是通过docker命令完成的。比如: <code>docker version</code><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker version</span><br><span class="line">Client:</span><br><span class="line"> Version:       17.12.0-ce</span><br><span class="line"> API version:   1.35</span><br><span class="line"> Go version:    go1.9.2</span><br><span class="line"> Git commit:    c97c6d6</span><br><span class="line"> Built: Wed Dec 27 20:05:22 2017</span><br><span class="line"> OS&#x2F;Arch:       windows&#x2F;amd64</span><br><span class="line"></span><br><span class="line">Server:</span><br><span class="line"> Engine:</span><br><span class="line">  Version:      17.12.0-ce</span><br><span class="line">  API version:  1.35 (minimum version 1.12)</span><br><span class="line">  Go version:   go1.9.2</span><br><span class="line">  Git commit:   c97c6d6</span><br><span class="line">  Built:        Wed Dec 27 20:12:29 2017</span><br><span class="line">  OS&#x2F;Arch:      linux&#x2F;amd64</span><br><span class="line">  Experimental: true</span><br></pre></td></tr></table></figure>
+查看一下我们拥有哪些images吧: <code>docker images</code><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker images</span><br><span class="line">REPOSITORY          TAG             IMAGE ID            CREATED             SIZE</span><br><span class="line">job1                latest          de714ebe3a54        29 hours ago        1.093 MB</span><br><span class="line">ubuntu              latest          f753707788c5        3 weeks ago         127.2 MB</span><br><span class="line">busybox             latest          e02e811dd08f        4 weeks ago         1.093 MB</span><br></pre></td></tr></table></figure>
+再查看一下我们有哪些Docker Container吧: <code>docker ps</code><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker ps</span><br><span class="line">CONTAINER ID        IMAGE           COMMAND             CREATED</span><br><span class="line">2c08ddb62c77        ubuntu          &quot;&#x2F;bin&#x2F;bash&quot;         28 hours ago</span><br><span class="line">5aa853bdb033        ubuntu          &quot;&#x2F;bin&#x2F;bash&quot;         28 hours ago</span><br></pre></td></tr></table></figure>
+这里看到的都是正在运行的Continer，如果要查看所有的Container就使用<code>docker ps -a</code></li>
+</ol>
+<p>下面我们从Docker hub的Registry下载一个Image，命令: <code>docker pull image-name</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker pull hello-world</span><br><span class="line">Using default tag: latest</span><br><span class="line">latest: Pulling from library&#x2F;hello-world</span><br><span class="line">ca4f61b1923c: Pull complete</span><br><span class="line">Digest: sha256:083de497cff944f969d8499ab94f07134c50bcf5e6b9559b27182d3fa80ce3f7</span><br><span class="line">Status: Downloaded newer image for hello-world:latest</span><br></pre></td></tr></table></figure>
+<p>在看一下现在的images: <code>docker image</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker images</span><br><span class="line">REPOSITORY          TAG             IMAGE ID            CREATED             SIZE</span><br><span class="line">job1                latest          de714ebe3a54        29 hours ago        1.093 MB</span><br><span class="line">ubuntu              latest          f753707788c5        3 weeks ago         127.2 MB</span><br><span class="line">busybox             latest          e02e811dd08f        4 weeks ago         1.093 MB</span><br><span class="line">hello-world         latest          c54a2cc56cbb        4 months ago        1.848 kB</span><br></pre></td></tr></table></figure>
+<p>可以看到我们刚从docker hub上面下载了一个docker官方已经制作好的叫做hello-world的image，下载完成后，就在本地可以查看到这个image了。</p>
+<p>我们把hello-world放到一个docker container里面让它跑起来: <code>docker run image-name</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker run hello-world</span><br><span class="line"></span><br><span class="line">Hello from Docker!</span><br><span class="line">This message shows that your installation appears to be working correctly.</span><br><span class="line"></span><br><span class="line">To generate this message, Docker took the following steps:</span><br><span class="line"> 1. The Docker client contacted the Docker daemon.</span><br><span class="line"> 2. The Docker daemon pulled the &quot;hello-world&quot; image from the Docker Hub.</span><br><span class="line">    (amd64)</span><br><span class="line"> 3. The Docker daemon created a new container from that image which runs the</span><br><span class="line">    executable that produces the output you are currently reading.</span><br><span class="line"> 4. The Docker daemon streamed that output to the Docker client, which sent it</span><br><span class="line">    to your terminal.</span><br></pre></td></tr></table></figure>
+<p>这个image运行后很简单，就是打印了这段话。告诉我们，我们已经成功的让docker daemon从docker hub上拉了一个”hello-world”的image，并且通过这个image创建了一个container，并且通过daemon将输出的内容传回了docker client，也就是我们现在看到的这段话。</p>
+<p>我们最后再看一下是否真的创建了docker container: <code>docker ps -a</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker ps -a</span><br><span class="line">CONTAINER ID    IMAGE        COMMAND      CREATED           STATUS</span><br><span class="line">3d9b24449cb3    hello-world  &quot;&#x2F;hello&quot;     9 minutes ago     Exited (0) 9 minutes ago</span><br><span class="line">c08ddb62c77     ubuntu       &quot;&#x2F;bin&#x2F;bash&quot;  28 hours ago      Up 28 hours</span><br></pre></td></tr></table></figure>
+<p>可以看到，确实已经创建了docker container了，可见<code>docker run</code>的命令实际上是create和start的结合命令，基于hello-world的image创建并启动了container。container启动后执行了打印的程序，打印完上面我们看到的那句话，程序执行完成，container也会跟着关闭了。从STATUS可以看到，在9分钟之前hello-world的这个container已经exited了。</p>
+<p>通过上面的步骤，我们大概知道docker是怎么玩的了。初步的印象可能会觉得和现在的VM的部署方式也挺像的，比如docker image就是一个系统备份文件，docker container就是一个跑起来的VM，那docker到底又有什么特别的呢？下一次再来分析。</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>博客绑定域名</title>
+    <url>/2018/02/14/%E5%8D%9A%E5%AE%A2%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D/</url>
+    <content><![CDATA[<hr>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>博客搭建完成后，还得拥有一个自己的域名，这样感觉才算完整。下面就介绍一下基于GithubPages和Hexo搭建的博客如何绑定域名。</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="购买域名"><a href="#购买域名" class="headerlink" title="购买域名"></a>购买域名</h1><p>我的域名是双十一的时候在阿里云进行购买的，好像10来块一年，个人感觉还是蛮便宜的嘛。所以我就以阿里云域名为例，介绍如何绑定。<br>注册登陆啥的自己去弄吧，现在产品中找到<strong>域名注册</strong>。<br><img src="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180214084203.png" alt="此处输入图片的描述"><br>输入我们想要的域名，进行查询，选择未被注册的域名进行购买：<br><img src="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180214084405.png" alt="此处输入图片的描述"><br>接下来就是下订单购买流程了。<br>对于域名的选择，这里有几个建议：</p>
+<blockquote>
+<ul>
+<li>域名尽量见名知意，与网站内容相近为宜</li>
+<li>域名长度尽可能短，方便他人记住自己的网站</li>
+<li>个人博客域名推荐：.com、.cn</li>
+</ul>
+</blockquote>
+<h1 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h1><p> 购买域名后，登陆进入阿里云官网的控制台，在域名列表中查看自己购买的域名：<br><img src="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180214085101.png" alt="此处输入图片的描述"><br>点击列表中对应的域名所在列的解析，进入解析界面：<br><img src="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180214122000.png" alt="此处输入图片的描述"><br>点击<strong>添加解析</strong>按钮，如下图依次输入:<strong>CNAME</strong>、<strong>@</strong>、<strong>Github博客域名</strong>。<br><img src="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180214122016.png" alt="此处输入图片的描述"><br>选择保存完成个人域名向个人博客的映射。添加解析后，在浏览器输入我们新注册的域名：<br><img src="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180214085150.png" alt="此处输入图片的描述"><br>可以看到网站报出了404错误，这说明我们的域名已经成功映射到了Github网站，但是它找不到我们的博客的位置，所以我们需要实现个人博客向个人域名的映射，进入Github博客的仓库：<br><img src="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180214085250.png" alt="此处输入图片的描述"><br>点击上图上方偏右的<strong>Create new file</strong>按钮，创建一个文件：<br><img src="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180214085311.png" alt="此处输入图片的描述"><br>文件名为<strong>CNAME</strong>(注意：没有扩展名)，文件内容为个人域名(注意：没有http://，没有www)，然后选择下方的<strong>Commit new file</strong>按钮。然后在浏览器端重新输入我们的域名，我们可以看到域名绑定成功。</p>
+<p>但是这时候我们不能高兴得太早，这时候问题开始出现了。</p>
+<h1 id="问题及解决"><a href="#问题及解决" class="headerlink" title="问题及解决"></a>问题及解决</h1><p>当我们在本地使用<code>hexo deploy</code>命令再一次部署博客时，会发现博客网页的<strong>css样式丢失</strong>或是<strong>404错误</strong>，这是因为本地的博客工程里面还没有CNAME，当我们重新部署后，远程的博客工程会和本地保持同步，将CNAME文件删除，所以我们要在本地添加CNAME文件：<br><img src="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180214085413.png" alt="此处输入图片的描述"><br>这里我们需要注意的是：CNAME文件添加的目录是在根目录下的source文件夹，而不是.deploy_git文件夹，完成添加后重新部署，博客网站又会恢复正常。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>博客相关配置</title>
+    <url>/2018/02/13/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<hr>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>在Hexo中有两份主要的配置文件，其名称都是_config.yml。其中，一份位于站点根目录下，主要包含Hexo本身的配置,我们称之为全局配置文件；另一份位于主题目录下，这份配置由主题作者提供，主要用于配置主题相关的选项,我们称之为主题配置文件。</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="Hexo站点配置"><a href="#Hexo站点配置" class="headerlink" title="Hexo站点配置"></a>Hexo站点配置</h1><p>hexo的官方网站：<a href="https://hexo.io/" target="_blank" rel="noopener">https://hexo.io/</a>，里面有hexo的详细说明文档，不过是英文的。没关系，英语不好的请往下看。</p>
+<p>注意：配置文件中每个字段后面的冒号是英文格式的，且在其后要加一个空格再写值</p>
+<p>比如：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">title: Myblog</span><br></pre></td></tr></table></figure>
+
+<p>编辑hexo目录下的_config.yml文件，具体配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Site 站点信息配置，根据自己的需要进行修改</span><br><span class="line">title: love70&#39;s Blog                          #站点名，会在浏览器页面标签左上角显示</span><br><span class="line">subtitle: Challenge is needed for success.    #副标题</span><br><span class="line">description:                                  #对站点的描述，给搜索引擎看的，可以自定义</span><br><span class="line">author: Zheng                                 #网站作者</span><br><span class="line">language: zh-Hans                             #网站语言</span><br><span class="line">timezone: Asia&#x2F;Shanghai                       #时区</span><br><span class="line"></span><br><span class="line"># URL 博客地址,与申请的GitHub一致</span><br><span class="line">url: love70.github.io</span><br><span class="line">root: &#x2F;</span><br><span class="line">permalink: :year&#x2F;:month&#x2F;:day&#x2F;:title&#x2F;</span><br><span class="line">permalink_defaults:</span><br><span class="line"></span><br><span class="line"># Directory</span><br><span class="line">source_dir: source         #资源文件夹，放在里面的文件会上传到github中</span><br><span class="line">public_dir: public         #公共文件夹，存放生成的静态文件</span><br><span class="line">tag_dir: tags              #标签文件夹，默认是tags。实际存放在source&#x2F;tags中。</span><br><span class="line">archive_dir: archives      #档案文件夹，默认是archives。</span><br><span class="line">category_dir: categories   #分类文件夹，默认是categories。实际存放在source&#x2F;categories中。</span><br><span class="line">code_dir: downloads&#x2F;code   #代码文件夹，默认是downloads&#x2F;code</span><br><span class="line">i18n_dir: :lang            #国际化文件夹，默认跟language相同</span><br><span class="line">skip_render:               #跳过指定文件的渲染，您可使用 glob 来配置路径。</span><br><span class="line"></span><br><span class="line"># Writing 这是文章布局、写作格式的定义，一般不修改</span><br><span class="line">new_post_name: :title.md # File name of new posts</span><br><span class="line">default_layout: post</span><br><span class="line">titlecase: false # Transform title into titlecase</span><br><span class="line">external_link: true # Open external links in new tab</span><br><span class="line">filename_case: 0</span><br><span class="line">render_drafts: false</span><br><span class="line">post_asset_folder: false</span><br><span class="line">relative_link: false</span><br><span class="line">future: true</span><br><span class="line">highlight:</span><br><span class="line">  enable: true</span><br><span class="line">  line_number: true</span><br><span class="line">  auto_detect: false</span><br><span class="line">  tab_replace:</span><br><span class="line"></span><br><span class="line"># Home page setting</span><br><span class="line"># path: Root path for your blogs index page. (default &#x3D; &#39;&#39;)</span><br><span class="line"># per_page: Posts displayed per page. (0 &#x3D; disable pagination)</span><br><span class="line"># order_by: Posts order. (Order by date descending by default)</span><br><span class="line">index_generator:</span><br><span class="line">  path: &#39;&#39;</span><br><span class="line">  per_page: 10</span><br><span class="line">  order_by: -date</span><br><span class="line"></span><br><span class="line"># Category &amp; Tag #分类和标签，一般不修改</span><br><span class="line">default_category: uncategorized</span><br><span class="line">category_map:</span><br><span class="line">tag_map:</span><br><span class="line"></span><br><span class="line"># Date &#x2F; Time format #日期、时间格式，一般不修改</span><br><span class="line">## Hexo uses Moment.js to parse and display date</span><br><span class="line">## You can customize the date format as defined in</span><br><span class="line">## http:&#x2F;&#x2F;momentjs.com&#x2F;docs&#x2F;#&#x2F;displaying&#x2F;format&#x2F;</span><br><span class="line">date_format: YYYY-MM-DD</span><br><span class="line">time_format: HH:mm:ss</span><br><span class="line"></span><br><span class="line"># Pagination  #可根据自己需要修改</span><br><span class="line">## Set per_page to 0 to disable pagination</span><br><span class="line">per_page: 5   #分页，每页文章数量</span><br><span class="line">pagination_dir: page</span><br><span class="line"></span><br><span class="line">search:</span><br><span class="line">  path: search.xml</span><br><span class="line">  field: post</span><br><span class="line">  format: html</span><br><span class="line">  limit: 10000</span><br><span class="line"></span><br><span class="line"># Extensions</span><br><span class="line">## Plugins: https:&#x2F;&#x2F;hexo.io&#x2F;plugins&#x2F;</span><br><span class="line">## Themes: https:&#x2F;&#x2F;hexo.io&#x2F;themes&#x2F;</span><br><span class="line">theme: next</span><br><span class="line"></span><br><span class="line"># Deployment</span><br><span class="line">## Docs: https:&#x2F;&#x2F;hexo.io&#x2F;docs&#x2F;deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https:&#x2F;&#x2F;github.com&#x2F;love70&#x2F;love70.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+
+<h1 id="Hexo使用主题"><a href="#Hexo使用主题" class="headerlink" title="Hexo使用主题"></a>Hexo使用主题</h1><p>Hexo 安装主题的方式非常简单，只需要将主题文件拷贝至站点目录的 themes 目录下， 然后修改下配置文件即可。</p>
+<p>hexo官方主题下载地址：<a href="https://hexo.io/themes/" target="_blank" rel="noopener">https://hexo.io/themes/</a>，里面有多种多样的主题模板供大家选择。</p>
+<p>这里推荐一款很火的主题：next，下面的配置也是以这个主题为例。如果你使用的是其他的主题，那么请你自己根据说明文档进行配置。</p>
+<p>next主题的官网，有很详细的配置文档：<a href="http://theme-next.iissnan.com/" target="_blank" rel="noopener">http://theme-next.iissnan.com/</a></p>
+<h2 id="下载主题"><a href="#下载主题" class="headerlink" title="下载主题"></a>下载主题</h2><p>next下载地址：<a href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">https://github.com/iissnan/hexo-theme-next</a><br><img src="http://oxtgpqjno.bkt.clouddn.com/2-1.png" alt="此处输入图片的描述"><br>到Gtihub下载此主题后解压，打开可以看到里面很多主题相关的文件，我们将此文件夹改名为next，然后将它复制到站点目录的/themes/目录下。</p>
+<h3 id="启用主题"><a href="#启用主题" class="headerlink" title="启用主题"></a>启用主题</h3><p>hexo默认是使用的landscape主题，我们可以在站点目录下的/themes/目录下看到landscape文件夹。</p>
+<p>我们的themes文件夹里可以放很多主题的文件夹，但是实际上我们的网站采用哪一个主题，这是需要我们进行配置的，打开编辑全局配置文件，找到下面的内容：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https:&#x2F;&#x2F;hexo.io&#x2F;plugins&#x2F;</span><br><span class="line">## Themes: https:&#x2F;&#x2F;hexo.io&#x2F;themes&#x2F;</span><br><span class="line">theme: next</span><br></pre></td></tr></table></figure>
+<p>在theme字段这里填上你下载的主题的文件夹的名字，例如我们使用next主题就填上next。这样配置文件就和我们的主题文件关联起来了。</p>
+<h3 id="配置主题配置文件"><a href="#配置主题配置文件" class="headerlink" title="配置主题配置文件"></a>配置主题配置文件</h3><p>主题配置文件位于站点目录下的/themes/next/目录下的_config.yml，打开编辑。详细的配置可参考next主题官网：<a href="http://theme-next.iissnan.com/" target="_blank" rel="noopener">http://theme-next.iissnan.com/</a></p>
+<h3 id="测试配置效果"><a href="#测试配置效果" class="headerlink" title="测试配置效果"></a>测试配置效果</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ hexo clean #用于清除缓存</span><br><span class="line">$ hexo generate #生成静态网页</span><br><span class="line">$ hexo server #开启本地预览</span><br></pre></td></tr></table></figure>
+
+<h3 id="解决遇到的问题"><a href="#解决遇到的问题" class="headerlink" title="解决遇到的问题"></a>解决遇到的问题</h3><p>到这里会发现点击左侧菜单的分类、标签和关于会提示找不到页面。<br>这是因为我们只是创建了菜单，还没有创建相应的页面。<br>新建页面的hexo命令是：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ hexo new page &quot;pageName&quot;</span><br></pre></td></tr></table></figure>
+<p>我们新建分类、标签、关于页面：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ hexo new page &#39;categories&#39;</span><br><span class="line">$ hexo new page &#39;tags&#39;</span><br><span class="line">$ hexo new page &#39;about&#39;</span><br></pre></td></tr></table></figure>
+<p>分别执行完这三条命令后，我们会发现站点目录下的/source/目录下多了三个文件夹：categories，tags，about，每个文件夹里面都会生成一个index.md文件，如下：</p>
+<p>默认都只会生成title和date字段，我们要为其添加上type字段，并赋值。</p>
+<blockquote>
+<p><strong>注意：</strong>博客文章的抬头信息中每个字段后面的冒号是英文格式的，而且其后要加一个空格再写值</p>
+</blockquote>
+<h2 id="配置第三方服务"><a href="#配置第三方服务" class="headerlink" title="配置第三方服务"></a>配置第三方服务</h2><p>静态站点拥有一定的局限性，因此我们需要借助于第三方服务来扩展站点的功能。以下是Next目前支持的第三方服务，可以根据需要集成一些功能进来：</p>
+<ul>
+<li>评论系统</li>
+<li>数据统计与分析</li>
+<li>内容分享服务</li>
+<li>搜索服务</li>
+<li>其它服务</li>
+</ul>
+<h2 id="Next主题个性化"><a href="#Next主题个性化" class="headerlink" title="Next主题个性化"></a>Next主题个性化</h2><p>可以看到有些next主题的网站很炫酷，那么是怎么配置的呢？在网上有很多相关的教程，下面的这篇博客总结了很多：<br><a href="http://blog.csdn.net/qq_33699981/article/details/72716951" target="_blank" rel="noopener">hexo的next主题个性化教程：打造炫酷网站</a><br>主要有以下32种：</p>
+<ul>
+<li>在右上角或者左上角实现fork me on github </li>
+<li>添加RSS </li>
+<li>添加动态背景 </li>
+<li>实现点击出现桃心效果 </li>
+<li>修改文章内链接文本样式</li>
+<li>修改文章底部的那个带#号的标签 </li>
+<li>在每篇文章末尾统一添加“本文结束”标记 </li>
+<li>修改作者头像并旋转 </li>
+<li>博文压缩 </li>
+<li>修改“代码块自定义样式</li>
+<li>侧边栏社交小图标设置</li>
+<li>主页文章添加阴影效果 </li>
+<li>在网站底部加上访问量 </li>
+<li>添加热度 </li>
+<li>网站底部字数统计 </li>
+<li>添加README.md文件</li>
+<li>设置网站的图标Favicon</li>
+<li>实现统计功能 </li>
+<li>添加顶部加载条 </li>
+<li>在文章底部增加版权信息 </li>
+<li>添加网易云跟帖(跟帖关闭，已失效，改为来必力)</li>
+<li>隐藏网页底部powered By Hexo/强力驱动</li>
+<li>修改网页底部的桃心 </li>
+<li>文章加密访问 </li>
+<li>添加jiathis分享 </li>
+<li>博文置顶 </li>
+<li>修改字体大小</li>
+<li>修改打赏字体不闪动 </li>
+<li>自定义鼠标样式 </li>
+<li>为博客加上萌萌的宠物</li>
+<li>DaoVoice在线联系 </li>
+<li>点击爆炸效果</li>
+</ul>
+<p>当然，每个人的需要都不太相同，大家也可以根据自己的喜好去选择使用第三方服务和个性化来让自己的博客站点更完善更强大。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>博客的编写与发布</title>
+    <url>/2018/02/13/%E5%8D%9A%E5%AE%A2%E7%9A%84%E7%BC%96%E5%86%99%E4%B8%8E%E5%8F%91%E5%B8%83/</url>
+    <content><![CDATA[<hr>
+<h1 id="认识与入门MarkDown"><a href="#认识与入门MarkDown" class="headerlink" title="认识与入门MarkDown"></a>认识与入门MarkDown</h1><p>博客的编写使用的是Markdown标记语言。Markdown是一种轻量级的「标记语言」，它的优点很多，目前也被越来越多的写作爱好者，撰稿者广泛使用。看到这里请不要被「标记」、「语言」所迷惑，Markdown的语法十分简单。常用的标记符号也不超过十个，这种相对于更为复杂的HTML标记语言来说，Markdown可谓是十分轻量的，学习成本也不需要太多，且一旦熟悉这种语法规则，会有一劳永逸的效果。</p>
+<a id="more"></a>
+
+<h2 id="Markdown官方文档"><a href="#Markdown官方文档" class="headerlink" title="Markdown官方文档"></a>Markdown官方文档</h2><p>这里可以看到官方的Markdown语法规则文档，当然，后文我也会用自己的方式，阐述这些语法在实际使用中的用法。</p>
+<ul>
+<li><a href="https://daringfireball.net/projects/markdown/syntax" target="_blank" rel="noopener">创始人John Gruber的Markdown语法说明</a></li>
+<li><a href="http://wowubuntu.com/markdown/#list" target="_blank" rel="noopener">Markdown中文版语法说明</a></li>
+</ul>
+<h2 id="使用Markdown的优点"><a href="#使用Markdown的优点" class="headerlink" title="使用Markdown的优点"></a>使用Markdown的优点</h2><ul>
+<li>专注你的文字内容而不是排版样式。</li>
+<li>轻松的导出 HTML、PDF 和本身的 .md 文件。</li>
+<li>纯文本内容，兼容所有的文本编辑器与字处理软件。</li>
+<li>可读，直观。适合所有人的写作语言。</li>
+</ul>
+<h2 id="用什么工具"><a href="#用什么工具" class="headerlink" title="用什么工具"></a>用什么工具</h2><p>推荐<a href="https://www.typora.io/" target="_blank" rel="noopener">Typora</a>、<a href="https://www.zybuluo.com/cmd/" target="_blank" rel="noopener">Cmd Markdown</a>等，在各编辑器中一般都会有关于Markdown语法的说明，遗忘时随时查看即可。</p>
+<h1 id="博客编写与发布"><a href="#博客编写与发布" class="headerlink" title="博客编写与发布"></a>博客编写与发布</h1><h2 id="新建博客文章"><a href="#新建博客文章" class="headerlink" title="新建博客文章"></a>新建博客文章</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ hexo new &quot;postName&quot; #新建文章</span><br></pre></td></tr></table></figure>
+<p>实例：新建博客《搭建我的第一个博客》</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ hexo new &quot;搭建我的第一个博客&quot;</span><br></pre></td></tr></table></figure>
+<p>到站点目录下的/source/_posts/目录下可以看到生成了名为：搭建我的第一个博客.md的文件，这是Markdown格式的文件，可以用sublime text3或者notepad++等编辑器打开，也可以下载一个上述的Markdown编辑器来编辑Markdown文件。</p>
+<h2 id="编辑博客"><a href="#编辑博客" class="headerlink" title="编辑博客"></a>编辑博客</h2><p>Hexo默认新建的文章抬头已有title、date、tags等属性，可能缺乏categories和meta标签，想要指定目录就需要添加categories属性，而meta标签则是为了便于搜索引擎的收录。如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: 搭建我的第一个博客</span><br><span class="line">date: 2017-10-15 20:41</span><br><span class="line">categories: Hexo</span><br><span class="line">comments: true</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+<p>categories字段，对博客进行分类管理，然后点击主页左侧菜单的分类就可看到具体的分类。</p>
+<p><strong>如何实现上图的阅读全文功能？</strong><br>在自己喜欢的位置添加一个：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;!--more--&gt;</span><br></pre></td></tr></table></figure>
+<p>即可，主题会自动识别这个标签，生成对应的阅读全文按钮。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">以上是文章摘要</span><br><span class="line">&lt;!--more--&gt;</span><br><span class="line">以下是余下全文</span><br></pre></td></tr></table></figure>
+
+<h2 id="发布博客"><a href="#发布博客" class="headerlink" title="发布博客"></a>发布博客</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ hexo clean  #清除缓存 网页正常情况下可以忽略此条命令</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ hexo generate  #生成静态页面至public目录</span><br></pre></td></tr></table></figure>
+<p>写好之后可以现在本地预览，确定无误之后再部署到Github上。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ hexo server  #开启预览访问端口（默认端口4000，&#39;ctrl + c&#39;关闭server）</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ hexo deploy  #将.deploy目录部署到GitHub</span><br></pre></td></tr></table></figure>
+<p>需要说明的是：<br>我们博客文章的编写都是Markdown文件，但是发布到github上的其实是html文件，将Markdown转换成html这个工作我们只要输入hexo generate命令即可，hexo会帮我们完成转换。</p>
+<p><strong>hexo命令简写形式</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo n &quot;我的博客&quot; &#x3D;&#x3D; hexo new &quot;我的博客&quot;</span><br><span class="line">hexo g &#x3D;&#x3D; hexo generate</span><br><span class="line">hexo s &#x3D;&#x3D; hexo server</span><br><span class="line">hexo d &#x3D;&#x3D; hexo deploy</span><br></pre></td></tr></table></figure>
+
+<h1 id="博客图片存放"><a href="#博客图片存放" class="headerlink" title="博客图片存放"></a>博客图片存放</h1><p>Markdown编辑器支持插入图片，可以直接给出图片的链接，因此我们可以将图片存放在我们hexo项目的目录下，再填写对应的路径，也可以将其存放在云服务器上，然后给出链接。</p>
+<p>在这里，我们介绍使用七牛云来进行图片托管。七牛云是国内领先的企业级云服务商,致力于打造以数据为核心的场景化PaaS服务，图片加载速度还不错，一般也不会出现图片挂掉的情况。</p>
+<h2 id="注册账号"><a href="#注册账号" class="headerlink" title="注册账号"></a>注册账号</h2><p>注册申请一个个人账号，然后激活邮箱完成注册。<br>官网地址：<a href="http://www.qiniu.com/" target="_blank" rel="noopener">http://www.qiniu.com/</a></p>
+<h2 id="存储图片"><a href="#存储图片" class="headerlink" title="存储图片"></a>存储图片</h2><p>（1）点击左侧菜单的对象存储<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-1.png" alt="此处输入图片的描述"><br>（2）点击上端的添加来创建存储空间<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-2.png" alt="此处输入图片的描述"><br>（3）填写好基本信息，点击确定创建<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-3.png" alt="此处输入图片的描述"><br>（4）来到新创建的存储空间，点击内容管理<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-4.png" alt="此处输入图片的描述"><br>（5）在内容管理中可以看到文件列表，点击上传文件<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-5.png" alt="此处输入图片的描述"><br>（6）可以设置上传的文件的前缀，以便进行分类管理<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-6.png" alt="此处输入图片的描述"><br>（7）点击关闭，回到内容管理页面查看上传的文件，复制图片链接<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-7.png" alt="此处输入图片的描述"><br>至此，我们就将我们博客需要的图片存储到了七牛云，然后我们只要将复制的图片链接插入到博客人文章中即可显示图片，感觉显示速度还是蛮快的。</p>
+<p>以上简单介绍了Markdown标记语言，博客的搭建与编写以及博客中图片的插入。此外，为使我们的博客更加的美观，我们还需进行Hexo的站点配置、主题配置和使用以及一些第三方服务的使用。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>搭建我的第一个博客</title>
+    <url>/2017/10/15/%E6%90%AD%E5%BB%BA%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<hr>
+<h1 id="基于GithubPages和Hexo搭建博客"><a href="#基于GithubPages和Hexo搭建博客" class="headerlink" title="基于GithubPages和Hexo搭建博客"></a>基于GithubPages和Hexo搭建博客</h1><h2 id="Github-Pages是什么？"><a href="#Github-Pages是什么？" class="headerlink" title="Github Pages是什么？"></a>Github Pages是什么？</h2><p>Github Pages本用于介绍托管在Github上的项目，不过由于它的空间免费稳定，所以用来搭建一个博客再好不过了。</p>
+<a id="more"></a>
+
+<h2 id="为什么-选择GIthub-Pages"><a href="#为什么-选择GIthub-Pages" class="headerlink" title="为什么 选择GIthub Pages?"></a>为什么 选择GIthub Pages?</h2><ul>
+<li>GitHub Pages有300M免费空间，搭建的博客可以很方便的进行管理，并且保存可靠；</li>
+<li>GitHub 是趋势，GitHub上面有很多大牛，学IT的人应该尽早融入这样的环境 ;</li>
+<li>程序员应该学会使用Git来管理项目，熟悉版本控制 ;</li>
+<li>Github上有很多的开源项目，多学习学习，眼界会开阔很多。</li>
+</ul>
+<h2 id="接下来应该怎么做？"><a href="#接下来应该怎么做？" class="headerlink" title="接下来应该怎么做？"></a>接下来应该怎么做？</h2><p>Hexo 是一个简单地、轻量地、基于Node的一个静态博客框架，可以方便的生成静态网页托管在github。我们要使用Github Pages + Hexo搭建博客站点，就必须注册Github账号，安装git、node.js以及hexo等，接下来就一起来实践吧！</p>
+<h2 id="Github注册与配置"><a href="#Github注册与配置" class="headerlink" title="Github注册与配置"></a>Github注册与配置</h2><h3 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h3><p>如果你还没有自己的Github账号，那请到Github官网注册账号：<a href="https://github.com/" target="_blank" rel="noopener">https://github.com/</a><br>注册成功后github会发送验证邮件到你的邮箱，请查收邮件并进行验证。</p>
+<h3 id="新建版本库"><a href="#新建版本库" class="headerlink" title="新建版本库"></a>新建版本库</h3><p>注册完成后，点击Start a project来新建一个版本库<br><img src="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%931.png" alt="新建版本库1"></p>
+<p>如果你已经注册，则在自己的主页，点击”New repository”，即可新建一个版本库</p>
+<p><img src="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%932.png" alt="新建版本库2"></p>
+<p>输入Repository name:yourname.github.io(yourname与你的注册用户名一致,这个就是你博客的域名了)</p>
+<h3 id="启用GitHub-Page"><a href="#启用GitHub-Page" class="headerlink" title="启用GitHub Page"></a>启用GitHub Page</h3><p>进入版本库后，点击右上方的setting</p>
+<p><img src="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%9333.png" alt="新建版本库3"></p>
+<p>来到Githubs pages栏目，点击Choose a theme</p>
+<p><img src="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%934.png" alt="新建版本库4"></p>
+<p>最后点击”Publish page”,发布github默认生成的一个静态站点</p>
+<p><img src="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%935.png" alt="新建版本库5"></p>
+<p>至此，我们已经配置好了github默认的静态站点，并且可以访问：你的github用户名.github.io测试我们刚刚建立好的站点主页。</p>
+<h2 id="下载并安装Git"><a href="#下载并安装Git" class="headerlink" title="下载并安装Git"></a>下载并安装Git</h2><h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p>根据自己电脑操作系统的位数到git官网下载相应的版本：<a href="https://git-scm.com/download/win" target="_blank" rel="noopener">https://git-scm.com/download/win</a></p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>根据自己的需要安装到相应的路径下，其他的一路点击next即可。</p>
+<h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><p>选中桌面图标计算机，右键选择属性，打开左边的高级系统设置，打开弹出窗口的环境变量，找到path进行编辑。<br>找到git的安装目录，将其复制后粘贴到path后面。注意每一个加进来的路径后面都要带英文格式的分号。<br>安装与配置过程可参考图文教程：<a href="http://jingyan.baidu.com/article/9f7e7ec0b17cac6f2815548d.html" target="_blank" rel="noopener">git的安装和配置</a></p>
+<h3 id="测试是否安装成功"><a href="#测试是否安装成功" class="headerlink" title="测试是否安装成功"></a>测试是否安装成功</h3><p>windows+R输入cmd打开命令提示符窗口，输入如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git --version</span><br></pre></td></tr></table></figure>
+<p>若安装成功会打印出本机安装的git的版本。</p>
+<h3 id="添加SSH-KEY到Github"><a href="#添加SSH-KEY到Github" class="headerlink" title="添加SSH KEY到Github"></a>添加SSH KEY到Github</h3><p>Git是分布式的代码管理器，远程的代码管理是基于SSH的，所以要使用远程的Git则需要SSH的配置。Github的SSH配置步骤如下：</p>
+<h4 id="1-设置Git-user的name和email："><a href="#1-设置Git-user的name和email：" class="headerlink" title="1 设置Git user的name和email："></a>1 设置Git user的name和email：</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git config --global user.name <span class="string">"your user name"</span></span><br><span class="line">$ git config --global user.email <span class="string">"your email address"</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-生成SSH密钥："><a href="#2-生成SSH密钥：" class="headerlink" title="2 生成SSH密钥："></a>2 生成SSH密钥：</h4><h5 id="2-1-检查-ssh-密钥是否已存在"><a href="#2-1-检查-ssh-密钥是否已存在" class="headerlink" title="2.1 检查 ssh 密钥是否已存在"></a>2.1 检查 ssh 密钥是否已存在</h5><p>查看C:\Users\YourUserName.ssh是否存在<br>如果该文件夹存在，则说明密钥已存在，则备份删除</p>
+<h5 id="2-2-生成-ssh-密钥"><a href="#2-2-生成-ssh-密钥" class="headerlink" title="2.2 生成 ssh 密钥"></a>2.2 生成 ssh 密钥</h5><p>在命令行中输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C “your email address”</span><br></pre></td></tr></table></figure>
+<p>连续按3个回车（密码默认为空），得到 id_rsa 和 id_rsa.pub 文件，说明生成成功。</p>
+<h4 id="3-添加密钥到-Github"><a href="#3-添加密钥到-Github" class="headerlink" title="3 添加密钥到 Github"></a>3 添加密钥到 Github</h4><p>打开 <a href="https://github.com/" target="_blank" rel="noopener">Github</a>，登录自己的账号后<br>点击自己的头像-&gt;settings-&gt;SSH Keys-&gt;Add SSH key<br>将本地 id_rsa.pub 中的内容粘贴到 Key 文本框中，随意输入一个 title，点击 Add Key 即可。</p>
+<h4 id="4-测试"><a href="#4-测试" class="headerlink" title="4 测试"></a>4 测试</h4><p>在命令行中输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ssh git@github.com</span><br></pre></td></tr></table></figure>
+<p>会出现如下询问：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Are you sure you want to continue connecting (yes&#x2F;no)?</span><br></pre></td></tr></table></figure>
+<p>键入yes后回车，如果出现：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Hi xxx! You’ve successfully authenticated, but GitHub does not provide shell accessConnection to github.com closed.</span><br></pre></td></tr></table></figure>
+<p>则说明验证成功，否则可能是上述步骤中的其中几步出错了，需重新来过。</p>
+<h2 id="下载并安装node-js"><a href="#下载并安装node-js" class="headerlink" title="下载并安装node.js"></a>下载并安装node.js</h2><h3 id="下载-1"><a href="#下载-1" class="headerlink" title="下载"></a>下载</h3><p>根据自己电脑操作系统的位数到git官网下载相应的版本：<a href="https://nodejs.org/en/download/" target="_blank" rel="noopener">https://nodejs.org/en/download/</a></p>
+<h3 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h3><p>根据自己的需要安装到响应的地方，其他的一路点击next即可</p>
+<h3 id="配置环境变量-1"><a href="#配置环境变量-1" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><p>选中桌面图标计算机，右键选择属性，打开左边的高级系统设置，打开弹出窗口的环境变量，找到path进行编辑。</p>
+<p>找到node.js的安装目录，将其复制后粘贴到path后面。注意每一个加进来的路径后面都要带英文格式的分号。</p>
+<h3 id="测试是否安装成功-1"><a href="#测试是否安装成功-1" class="headerlink" title="测试是否安装成功"></a>测试是否安装成功</h3><p>windows+R输入cmd打开命令提示符窗口，输入如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
+<p>若安装成功会打印出本机安装的node.js的版本。</p>
+<h2 id="下载并安装Hexo"><a href="#下载并安装Hexo" class="headerlink" title="下载并安装Hexo"></a>下载并安装Hexo</h2><p>hexo是基于node.js的静态博客，官网也是搭建在GitHub上。</p>
+<h3 id="安装-2"><a href="#安装-2" class="headerlink" title="安装"></a>安装</h3><p>在你喜欢的路径下新建一个文件夹blog，用来存放博客的文件，在此文件夹中右键打开Git Bash</p>
+<p>输入如下指令进行安装：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
+<p>如果执行这条命令时长时间未成功，那么请先使用下面的命令将npm镜像源更改为国内的镜像，再执行上面的安装命令，因为国外的镜像源很有可能被墙了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm config <span class="built_in">set</span> registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
+<p>初始化hexo</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo init hexo</span><br></pre></td></tr></table></figure>
+<p>这里会将Github上的hexo项目clone下来，得到hexo文件夹。<br>初始化成功后会在最后打印一行：INFO Start blogging with Hexo!</p>
+<h3 id="安装依赖文件"><a href="#安装依赖文件" class="headerlink" title="安装依赖文件"></a>安装依赖文件</h3><p>进入到hexo文件夹</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> hexo</span><br></pre></td></tr></table></figure>
+<p>安装依赖文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
+<p>部署形成文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>本地测试：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>下图所示则表示搭建成功了：<br><img src="http://oxtgpqjno.bkt.clouddn.com/hexo-s.png" alt="enter image description here"><br>在浏览器输入：<a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/ </a>即可访问到我们搭建好的hexo站点。<br><img src="http://oxtgpqjno.bkt.clouddn.com/hexo-first.png" alt="enter image description here"></p>
+<h2 id="将本地hexo项目托管到Github"><a href="#将本地hexo项目托管到Github" class="headerlink" title="将本地hexo项目托管到Github"></a>将本地hexo项目托管到Github</h2><h3 id="将本地hexo项目托管到Github-1"><a href="#将本地hexo项目托管到Github-1" class="headerlink" title="将本地hexo项目托管到Github"></a>将本地hexo项目托管到Github</h3><h4 id="修改全局配置文件-config-yml"><a href="#修改全局配置文件-config-yml" class="headerlink" title="修改全局配置文件_config.yml"></a>修改全局配置文件_config.yml</h4><blockquote>
+<p><strong>说明：</strong>hexo文件夹下一个_config.yml，我们称之为全局配置文件，在每个主题文件夹内还会有一个_config.yml文件，我们称之为主题配置文件。</p>
+</blockquote>
+<p>用sublime text3或者notepad++等编辑器打开hexo文件夹下的_config.yml文件。</p>
+<blockquote>
+<p><strong>注意：</strong>配置文件中每个字段后面的冒号是英文格式的，且在其后要加一个空格再写值。</p>
+</blockquote>
+<p>编辑最后面的deploy属性，加入代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type: git</span><br><span class="line">repository: https:&#x2F;&#x2F;github.com&#x2F;你的Github用户名&#x2F;你的Github用户名.github.io.git</span><br><span class="line">branch: master</span><br></pre></td></tr></table></figure>
+
+<p>type使用是git。</p>
+<p>repository属性改成你的刚才创建仓库git地址。</p>
+<p>分支branch填写master。</p>
+<h4 id="安装hexo-deployer-git插件"><a href="#安装hexo-deployer-git插件" class="headerlink" title="安装hexo-deployer-git插件"></a>安装hexo-deployer-git插件</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+
+<h4 id="部署到Github上"><a href="#部署到Github上" class="headerlink" title="部署到Github上"></a>部署到Github上</h4><p>依次执行以下三条命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo clean  <span class="comment">#清除缓存 网页正常情况下可以忽略此条命令</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate  <span class="comment">#生成静态页面至public目录</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy  <span class="comment">#将.deploy目录部署到GitHub</span></span><br></pre></td></tr></table></figure>
+
+<p>执行hexo deploy命令之后，如果最后一行打印出如下信息则表示部署成功：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">INFO  Deploy done: git</span><br></pre></td></tr></table></figure>
+<p>然后你再去访问你创建的Github pages地址，也就是：你的Github用名.github.io，即可看到你本地的hexo项目已经被部署到github上去了。此时博客的默认主题是landscape，即上面本地测试时的样子。</p>
+<p>至此，基于Github Pages和Hexo的博客就已经搭建完毕了，至于Hexo站点的配置、主题配置和使用内容甚多，还需要再以后慢慢学习。我的第一篇博客的搭建就讲解到这了。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+  </entry>
+</search>
