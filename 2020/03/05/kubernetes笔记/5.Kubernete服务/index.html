@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1. Service 的概念Kubernetes Service定义了这样一种抽象：一个Pod的逻辑分组，一种可以访问它们的策略——通常称为微服务。这一组Pod能够被Service访问到，通常是通过Label Selector。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="五、Kubernetes 服务">
+<meta property="og:url" content="love70.github.io/2020/03/05/kubernetes%E7%AC%94%E8%AE%B0/5.Kubernete%E6%9C%8D%E5%8A%A1/index.html">
+<meta property="og:site_name" content="love70&#39;s Blog">
+<meta property="og:description" content="1. Service 的概念Kubernetes Service定义了这样一种抽象：一个Pod的逻辑分组，一种可以访问它们的策略——通常称为微服务。这一组Pod能够被Service访问到，通常是通过Label Selector。">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317111050561.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317112600628.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317112636720.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200319154604544.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317114117470.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317161145733.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317113258867.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317161218700.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317155134956.png">
+<meta property="article:published_time" content="2020-03-05T12:41:00.000Z">
+<meta property="article:modified_time" content="2020-03-29T13:24:44.318Z">
+<meta property="article:author" content="Zheng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317111050561.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="love70.github.io/2020/03/05/kubernetes笔记/5.Kubernete服务/"/>
+
+
+
+
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0f81ff2f.js","daovoice")
+  daovoice('init', {
+      app_id: "9d540936"
+    });
+  daovoice('update');
+  </script>
+
+  <title>五、Kubernetes 服务 | love70's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?195e030fc879cff274bb0c66746d14d5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">love70's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Challenge is needed for success.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="love70.github.io/2020/03/05/kubernetes%E7%AC%94%E8%AE%B0/5.Kubernete%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zheng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/demo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="love70's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">五、Kubernetes 服务</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-05T20:41:00+08:00">
+                2020-03-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/03/05/kubernetes%E7%AC%94%E8%AE%B0/5.Kubernete%E6%9C%8D%E5%8A%A1/" class="leancloud_visitors" data-flag-title="五、Kubernetes 服务">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="1-Service-的概念"><a href="#1-Service-的概念" class="headerlink" title="1. Service 的概念"></a>1. Service 的概念</h1><p>Kubernetes <strong>Service</strong>定义了这样一种抽象：<strong>一个Pod的逻辑分组，一种可以访问它们的策略——通常称为微服务</strong>。这一组Pod能够被Service访问到，通常是通过<strong>Label Selector</strong>。</p>
+<a id="more"></a>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317111050561.png" alt="image-20200317111050561" style="zoom:50%;" />
+
+<p>Service能够提供<strong>负载均衡</strong>的能力，但是在使用上有以下限制：</p>
+<ul>
+<li><strong>只能提供4层负载均衡的能力</strong>，而没有7层功能，但有时我们可能需要更多的匹配规则来转发请求，这点上4层负载均衡是不支持的。</li>
+</ul>
+<h1 id="2-VIP-和-Service-代理"><a href="#2-VIP-和-Service-代理" class="headerlink" title="2. VIP 和 Service 代理"></a>2. VIP 和 Service 代理</h1><p>在Kubernetes集群中，每个Node运行一个<strong>kube-proxy</strong>进程。kube-proxy负载为Service实现了一种<strong>VIP（虚拟IP）</strong>的形式，而不是ExternalName的形式。在Kubernetes v1.0版本，代理完全在<strong>userspace</strong>。在Kubernetes v1.1版本，新增<strong>iptable</strong>代理，但并不是默认的运行模式。从Kubernetes v1.2起，默认就是iptables代理。在Kubernetes v1.8.0-beta.0中，添加了<strong>ipvs</strong>代理。</p>
+<p><strong>在Kubernetes 1.14版本开始默认使用ipvs代理</strong></p>
+<p>在Kubernetes v1.0版本，Service是“4层”（TCP/UDP over IP）概念。在Kubernetes v1.1版本，新增了<strong>Ingress</strong> API（beta版），用来表示“7层”（HTTP）服务<strong>。</strong></p>
+<p><strong>为何不使用round-robin DNS？</strong></p>
+<p>70：DNS会在客户端上进行缓存，一旦有某个地址信息，之后访问都是该地址。</p>
+<h1 id="3-代理模式的分类"><a href="#3-代理模式的分类" class="headerlink" title="3. 代理模式的分类"></a>3. 代理模式的分类</h1><h2 id="3-1-userspace-代理模式"><a href="#3-1-userspace-代理模式" class="headerlink" title="3.1 userspace 代理模式"></a>3.1 userspace 代理模式</h2><img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317112600628.png" alt="image-20200317112600628" style="zoom:50%;" />
+
+<h2 id="3-2-iptables-代理模式"><a href="#3-2-iptables-代理模式" class="headerlink" title="3.2 iptables 代理模式"></a>3.2 iptables 代理模式</h2><img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317112636720.png" alt="image-20200317112636720" style="zoom:50%;" />
+
+<h2 id="3-3-ipvs-代理模式"><a href="#3-3-ipvs-代理模式" class="headerlink" title="3.3 ipvs 代理模式"></a>3.3 ipvs 代理模式</h2><p><strong>这种模式，kube-proxy会监视Kubernetes Service对象和Endpoints，调用netlink接口以相应地创建ipvs规则并定期与Kubernetes Service对象和Endpoints对象同步ipvs规则，以确保ipvs状态与期望一致。访问服务时，流量将被重定向到其中一个后端。</strong></p>
+<p>与iptables类似，ipvs有netfilter的hook功能，但使用哈希表作为底层数据结构并在内核空间中工作。这意味着ipvs可以<strong>更快地重定向流量</strong>，并且在同步代理规则时具有<strong>更好地性能</strong>。此外，ipvs<strong>为负载均衡算法提供了更多选项</strong>，例如：</p>
+<ul>
+<li><strong>rr</strong>：轮询调度</li>
+<li><strong>lc</strong>：最小连接数</li>
+<li><strong>dh</strong>：目标哈希</li>
+<li><strong>sh</strong>：源哈希</li>
+<li><strong>sed</strong>：最短期望延迟</li>
+<li><strong>nq</strong>：不排队调度</li>
+</ul>
+<p><strong>注意：</strong>ipvs模式假定在运行kube-proxy之前在节点上都已经安装了IPVS内核模块。当kube-proxy以ipvs代理模式启动时，kube-proxy将验证节点上是否安装了IPVS模块，如果未安装，则kube-proxy将回退到iptables代理模式。</p>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200319154604544.png" alt="image-20200317113258867" style="zoom:50%;" />
+
+
+
+<h1 id="4-Service-的类型"><a href="#4-Service-的类型" class="headerlink" title="4. Service 的类型"></a>4. Service 的类型</h1><p>Service在Kubernetes中有以下四种类型：</p>
+<ul>
+<li><strong>ClusterIP</strong>：默认类型，自动分配一个仅 Cluster 内部可以访问的虚拟IP。</li>
+<li><strong>NodePort</strong>：在 ClusterIP 基础上为 Service 在每台机器上绑定一个端口，这样就可以通过 : NodePort 来访问服务。</li>
+<li><strong>LoadBalancer</strong>：在 NodePort 的基础上，借助 cloud provider 创建一个外部负载均衡器，并将请求转发到 : NodePort。</li>
+<li><strong>ExternalName</strong>：把集群外部的服务进入到集群内部来，在集群内部直接使用。没有任何类型代理被创建，这只有Kubernetes 1.7或更高版本的kube-dns才支持。</li>
+</ul>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317114117470.png" alt="image-20200319154604544" style="zoom:50%;" />
+
+<p>70：我删除一个SVC后IPVS规则并没有立即发生改变，通过原有地址仍然可以访问，不知道要过多久才会自动改变？重启主机后，IPVS规则是重新一条条的写入，删除前SVC的规则就不会再写入了。</p>
+<h2 id="4-1-Cluster-IP"><a href="#4-1-Cluster-IP" class="headerlink" title="4.1 Cluster IP"></a>4.1 Cluster IP</h2><p><strong>Cluster IP主要在每个Node节点使用ipvs（iptables），将发向Cluster IP对应端口的数据，转发到kube-proxy中。然后kube-proxy自己内部实现有负载均衡的方法，并可以查询到这个Service下对应Pod的地址和端口，进而把数据转发给对应的Pod的地址和端口。</strong>（70：转发到kube-proxy，不是只有userspace才会转发到kube-proxy吗？）</p>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317161145733.png" alt="image-20200317114117470" style="zoom:50%;" />
+
+<p>为了实现图上的功能，主要需要以下几个组件的协同工作：</p>
+<ul>
+<li><strong>apiserver</strong>：用户通过kubectl命令向apiserver发送创建Service的命令，apiserver接收到请求后将数据存储到etcd中。</li>
+<li><strong>kube-proxy</strong>：Kubernetesd的每个节点中都有一个叫做kube-proxy的进程，这个进程负责感知Service，Pod的变化，并将变化的信息写入本地的ipvs（iptables）规则中。</li>
+<li><strong>ipvs（iptables）</strong>使用<strong>NAT</strong>等技术将virtualIP的流量转至endpoint中。</li>
+</ul>
+<p><strong>创建myapp-deployment.yaml文件</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-deploy</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">      <span class="attr">release:</span> <span class="string">stable</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">release:</span> <span class="string">stable</span></span><br><span class="line">        <span class="attr">env:</span> <span class="string">test</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">          <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">              <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>创建myapp-service.yaml文件</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-service</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ClusterIP</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">release:</span> <span class="string">stable</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span>		<span class="comment"># Service port</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span>  <span class="comment"># Pod port</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="4-2-Headless-Service"><a href="#4-2-Headless-Service" class="headerlink" title="4.2 Headless Service"></a>4.2 Headless Service</h2><p>有时<strong>不需要或不想要负载均衡，以及单独的Service IP</strong>。遇到这种情况，可以通过指定ClusterIP（spec.clusterIP）的值为“None”来创建<strong>Headless Service</strong>。<strong>这类Service并不会分配Cluster IP，kube-proxy不会处理它们，而且平台也不会为它们进行负载均衡和路由。</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-headless</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="string">"None"</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p>SVC一旦创建成功，会写入到CoreDNS中，写入的格式为：<code>SVC_NAME.NAMESPACE.svc.cluster.local.</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> dig -t A myapp-headless.default.svc.cluster.local. @10.96.0.10</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="4-3-NodePort"><a href="#4-3-NodePort" class="headerlink" title="4.3 NodePort"></a>4.3 NodePort</h2><p><strong>NodePort</strong>的原理在于<strong>在node上开了一个端口，将向该端口的流量导入到kube-proxy，然后由kube-proxy进一步转发给对应的Pod</strong>。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-nodeport</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">release:</span> <span class="string">stable</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>查询流程</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ipvsadm -Ln</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> iptables -t nat -nvL</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="4-4-LoadBalancer"><a href="#4-4-LoadBalancer" class="headerlink" title="4.4 LoadBalancer"></a>4.4 LoadBalancer</h2><p>LoadBalancer和NodePort其实是同一种方式。区别在于LoadBalancer比NodePort多了一步，就是<strong>可以调用cloud provider去创建LB来向节点导流</strong>。</p>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317113258867.png" alt="image-20200317155134956" style="zoom:50%;" />
+
+<h2 id="4-5-ExternalName"><a href="#4-5-ExternalName" class="headerlink" title="4.5 ExternalName"></a>4.5 ExternalName</h2><p>这种类型的 Service 通过返回 CNAME 和它的值，可以将服务映射到 externalName 字段的内容（例如：hub.atguigu.com）。ExternalName Service 是 Service 的特例，它没有 selector，也没有定义任何的端口和Endpoint。相反的，对于运行在集群外部的服务，它通过返回该外部服务的别名这种方式来提供服务。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-external</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ExternalName</span></span><br><span class="line">  <span class="attr">externalName:</span> <span class="string">hub.atguigu.com</span></span><br></pre></td></tr></table></figure>
+
+<p>当查询主机 myapp-external.default.svc.cluster.local (SVC_NAME.NAMESPACE.svc.cluster.local.) 时，集群的DNS服务将返回一个值 my.database.example.com 的 CNAME记录。因此集群内部只需要使用SVC域名，当extenalName变化时改SVC即可，集群内部不用变。访问这个服务的工作方式和其他的相同，唯一不同的是重定向发生在DNS层，而且不会进行代理或转发。</p>
+<h1 id="5-Ingress"><a href="#5-Ingress" class="headerlink" title="5. Ingress"></a>5. Ingress</h1><h2 id="5-1-Ingress-介绍"><a href="#5-1-Ingress-介绍" class="headerlink" title="5.1 Ingress 介绍"></a>5.1 Ingress 介绍</h2><p>Ingress提供了一个API接口暴露方式，拿Ingress实现的方案有很多（LVS、HAPROXY、NGINX），这里用到的是ingress-nginx。（70：简单来说ingress-nginx会帮我们部署一个nginx，会自动帮我们进行nginx规则的配置，可以进入ingress-nginx的Pod节点查看nginx.conf）</p>
+<p>Ingress-Nginx github地址：<a href="https://github.com/kubernetes/ingress-nginx" target="_blank" rel="noopener">https://github.com/kubernetes/ingress-nginx</a></p>
+<p>Ingress-Nginx 官网网站地址：<a href="https://kubernetes.github.io/ingress-nginx/" target="_blank" rel="noopener">https://kubernetes.github.io/ingress-nginx/</a></p>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317161218700.png" alt="image-20200317161145733" style="zoom:50%;" />
+
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200317155134956.png" alt="image-20200317161218700" style="zoom:50%;" />
+
+<h2 id="5-2-部署-Ingress-Nginx"><a href="#5-2-部署-Ingress-Nginx" class="headerlink" title="5.2 部署 Ingress-Nginx"></a>5.2 部署 Ingress-Nginx</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/mandatory.yaml</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/provider/baremetal/service-nodeport.yaml</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="5-3-Ingress-HTTP-代理访问"><a href="#5-3-Ingress-HTTP-代理访问" class="headerlink" title="5.3 Ingress HTTP 代理访问"></a>5.3 Ingress HTTP 代理访问</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">          <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">        </span><br><span class="line"><span class="meta">---</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-svc</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ClusterIP</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">---</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-ingress</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">www1.atguigu.com</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">paths:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">            <span class="attr">backend:</span></span><br><span class="line">              <span class="attr">serviceName:</span> <span class="string">nginx-svc</span></span><br><span class="line">              <span class="attr">servicePort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p>70：这里访问是通过ingress-nginx的端口进行访问，即安装ingress-nginx时创建的svc，通过<code>kubectl get svc -n ingress-nginx</code>查看，不是上诉yaml文件创建的svc。</p>
+<p>70：用chrome验证负载均衡效果可能无效，好像是与浏览器相关，之前在做nginx的轮询实验时也遇到过，改用命令行curl验证。</p>
+<p>70：这里也可以创建多个svc通过ingress-nginx进行代理，方法同上面相同 </p>
+<h2 id="5-4-Ingress-HTTPS-代理访问"><a href="#5-4-Ingress-HTTPS-代理访问" class="headerlink" title="5.4 Ingress HTTPS 代理访问"></a>5.4 Ingress HTTPS 代理访问</h2><p><strong>创建证书，以及cert存储方式</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj <span class="string">"/CN=nginxsvc/0=nginxsvc"</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create secret tls tls-secret --key tls.key --cert tls.crt</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-ingress</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">tls:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">hosts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">www3.atguigu.com</span></span><br><span class="line">      <span class="attr">secretName:</span> <span class="string">tls-secret</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">www3.atguigu.com</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">paths:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">            <span class="attr">backend:</span></span><br><span class="line">              <span class="attr">serviceName:</span> <span class="string">nginx-svc</span></span><br><span class="line">              <span class="attr">servicePort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="5-5-Nginx-进行-BasicAuth"><a href="#5-5-Nginx-进行-BasicAuth" class="headerlink" title="5.5 Nginx 进行 BasicAuth"></a>5.5 Nginx 进行 BasicAuth</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum -y install httpd</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> htpasswd -c auth foo</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create secret generic basic-auth --from-file=auth</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-ingress-with-auth</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/auth-type:</span> <span class="string">basic</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/auth-secret:</span> <span class="string">basic-auth</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/auth-realm:</span> <span class="string">'Authentication Required - foo'</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">auth.atguigu.com</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">paths:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">            <span class="attr">backend:</span></span><br><span class="line">              <span class="attr">serviceName:</span> <span class="string">nginx-svc</span></span><br><span class="line">              <span class="attr">servicePort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="5-6-Nginx-进行重写"><a href="#5-6-Nginx-进行重写" class="headerlink" title="5.6 Nginx 进行重写"></a>5.6 Nginx 进行重写</h2><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>描述</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>nginx.ingress.kubernetes.io/rewrite-target</td>
+<td>必须重定向流量的目标URI</td>
+<td>串</td>
+</tr>
+<tr>
+<td>nginx.ingress.kubernetes.io/ssl-redirect</td>
+<td>指示位置部分是否仅可访问SSL（当Ingress包含证书时默认为True）</td>
+<td>布尔</td>
+</tr>
+<tr>
+<td>nginx.ingress.kubernetes.io/force-ssl-redirect</td>
+<td>即使Ingress为启动TLS，也强制重定向到HTTPS</td>
+<td>布尔</td>
+</tr>
+<tr>
+<td>nginx.ingress.kubernetes.io/app-root</td>
+<td>定义Controller必须重定向的应用程序根，如果它在‘/’上下文中</td>
+<td>串</td>
+</tr>
+<tr>
+<td>nginx.ingress.kubernetes.io/use-regex</td>
+<td>指示Ingress上定义的路径是否使用正则表达式</td>
+<td>布尔</td>
+</tr>
+</tbody></table>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-ingress</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">nginx.ingress.kubernetes.io/rewrite-target:</span> <span class="string">http://foo.bar.com:795/hostname.html</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">host:</span> <span class="string">foo10.bar.com</span></span><br><span class="line">      <span class="attr">http:</span></span><br><span class="line">        <span class="attr">paths:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">path:</span> <span class="string">/</span></span><br><span class="line">            <span class="attr">backend:</span></span><br><span class="line">              <span class="attr">serviceName:</span> <span class="string">nginx-svc</span></span><br><span class="line">              <span class="attr">servicePort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/微信收款码.jpg" alt="Zheng 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/支付宝收款码.jpg" alt="Zheng 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/04/kubernetes%E7%AC%94%E8%AE%B0/4.Kubernetes%E8%B5%84%E6%BA%90%E6%8E%A7%E5%88%B6%E5%99%A8/" rel="next" title="四、Kubernetes 资源控制器">
+                <i class="fa fa-chevron-left"></i> 四、Kubernetes 资源控制器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/06/kubernetes%E7%AC%94%E8%AE%B0/6.Kubernetes%E5%AD%98%E5%82%A8/" rel="prev" title="六、Kubernetes 存储">
+                六、Kubernetes 存储 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+  <script>
+    window._bd_share_config = {
+      "common": {
+        "bdText": "",
+        "bdMini": "1",
+        "bdMiniList": false,
+        "bdPic": ""
+      },
+      "image": {
+        "viewList": ["tsina", "douban", "sqq", "qzone", "weixin", "twi", "fbook"],
+        "viewText": "分享到：",
+        "viewSize": "16"
+      },
+      "slide": {
+        "bdImg": "5",
+        "bdPos": "left",
+        "bdTop": "100"
+      }
+    }
+  </script>
+
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDE0OC8xMDY4NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/demo.jpg"
+                alt="Zheng" />
+            
+              <p class="site-author-name" itemprop="name">Zheng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/love70" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Service-的概念"><span class="nav-number">1.</span> <span class="nav-text">1. Service 的概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-VIP-和-Service-代理"><span class="nav-number">2.</span> <span class="nav-text">2. VIP 和 Service 代理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-代理模式的分类"><span class="nav-number">3.</span> <span class="nav-text">3. 代理模式的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-userspace-代理模式"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 userspace 代理模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-iptables-代理模式"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 iptables 代理模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-ipvs-代理模式"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 ipvs 代理模式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-Service-的类型"><span class="nav-number">4.</span> <span class="nav-text">4. Service 的类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-Cluster-IP"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 Cluster IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-Headless-Service"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 Headless Service</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-NodePort"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 NodePort</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-LoadBalancer"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 LoadBalancer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-5-ExternalName"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 ExternalName</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-Ingress"><span class="nav-number">5.</span> <span class="nav-text">5. Ingress</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-Ingress-介绍"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 Ingress 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-部署-Ingress-Nginx"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 部署 Ingress-Nginx</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3-Ingress-HTTP-代理访问"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 Ingress HTTP 代理访问</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-4-Ingress-HTTPS-代理访问"><span class="nav-number">5.4.</span> <span class="nav-text">5.4 Ingress HTTPS 代理访问</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-5-Nginx-进行-BasicAuth"><span class="nav-number">5.5.</span> <span class="nav-text">5.5 Nginx 进行 BasicAuth</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-6-Nginx-进行重写"><span class="nav-number">5.6.</span> <span class="nav-text">5.6 Nginx 进行重写</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zheng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/canvas_lines.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("nB3bSL0ilFthw62j0k6C5CXR-gzGzoHsz", "YhNf2pmy8UbaPT8sUhKasOGI");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1. 机制说明Kubernetes 作为一个分布式集群的管理工具，保证集群的安全性是其一个重要的任务。API Server 是集群内部各个组件通信的中介，也是外部控制的入口。所以 Kubernetes 的安全机制基本就是围绕保护 API Server 来设计的。Kubernetes 使用了认证（Authentication）、鉴权（Authorization）、准入控制（Admission Con">
+<meta property="og:type" content="article">
+<meta property="og:title" content="八、Kubernetes 安全">
+<meta property="og:url" content="love70.github.io/2020/03/08/kubernetes%E7%AC%94%E8%AE%B0/8.Kubernetes%E5%AE%89%E5%85%A8/index.html">
+<meta property="og:site_name" content="love70&#39;s Blog">
+<meta property="og:description" content="1. 机制说明Kubernetes 作为一个分布式集群的管理工具，保证集群的安全性是其一个重要的任务。API Server 是集群内部各个组件通信的中介，也是外部控制的入口。所以 Kubernetes 的安全机制基本就是围绕保护 API Server 来设计的。Kubernetes 使用了认证（Authentication）、鉴权（Authorization）、准入控制（Admission Con">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200322095843242.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200322100312353.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200322100342463.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200322101017701.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200322101413438.png">
+<meta property="article:published_time" content="2020-03-08T12:41:00.000Z">
+<meta property="article:modified_time" content="2020-03-29T13:29:04.281Z">
+<meta property="article:author" content="Zheng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200322095843242.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="love70.github.io/2020/03/08/kubernetes笔记/8.Kubernetes安全/"/>
+
+
+
+
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0f81ff2f.js","daovoice")
+  daovoice('init', {
+      app_id: "9d540936"
+    });
+  daovoice('update');
+  </script>
+
+  <title>八、Kubernetes 安全 | love70's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?195e030fc879cff274bb0c66746d14d5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">love70's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Challenge is needed for success.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="love70.github.io/2020/03/08/kubernetes%E7%AC%94%E8%AE%B0/8.Kubernetes%E5%AE%89%E5%85%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zheng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/demo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="love70's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">八、Kubernetes 安全</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-08T20:41:00+08:00">
+                2020-03-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/03/08/kubernetes%E7%AC%94%E8%AE%B0/8.Kubernetes%E5%AE%89%E5%85%A8/" class="leancloud_visitors" data-flag-title="八、Kubernetes 安全">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="1-机制说明"><a href="#1-机制说明" class="headerlink" title="1. 机制说明"></a>1. 机制说明</h1><p>Kubernetes 作为一个分布式集群的管理工具，保证集群的安全性是其一个重要的任务。<strong>API Server 是集群内部各个组件通信的中介，也是外部控制的入口。</strong>所以 Kubernetes 的安全机制基本就是<strong>围绕保护 API Server 来设计的。</strong>Kubernetes 使用了<strong>认证（Authentication）</strong>、<strong>鉴权（Authorization）</strong>、<strong>准入控制（Admission Control）</strong>三步来保证API Server的安全。</p>
+<a id="more"></a>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200322095843242.png" alt="image-20200322095843242" style="zoom:50%;" />
+
+
+
+<h1 id="2-认证-Authentication"><a href="#2-认证-Authentication" class="headerlink" title="2. 认证 Authentication"></a>2. 认证 Authentication</h1><ul>
+<li><p><strong>HTTP Token 认证</strong>：通过一个 Token 来识别合法用户</p>
+<ul>
+<li>HTTP Token 的认证是用一个很长的特殊编码方式的并且难以被模仿的字符串 - Token 来表达客户的一种方式。Token 是一个很长的很复杂的字符串，每一个 Token 对应一个用户名存储在 API Server 能访问的文件中。当客户端发起 API 调用请求时，需要在 HTTP Header 里放入 Token。</li>
+</ul>
+</li>
+<li><p><strong>HTTP Base 认证</strong>：通过 用户名 + 密码 的方式认证</p>
+<ul>
+<li>用户名 + 密码 用 BASE64 算法进行编码后的字符串放在 HTTP Request 中的 Heather Authorization 域里发送给服务端，服务端收到后进行编码，获取用户名及密码。</li>
+</ul>
+</li>
+<li><p>最严格的 <strong>HTTPS 证书认证</strong>：基于 CA 根证书签名的客户端身份认证方式。</p>
+</li>
+</ul>
+<p><strong>Ⅰ、HTTPS 证书认证</strong></p>
+<p>70：双向认证</p>
+<p>70：企业基本上会选择 HTTPS 证书认证，安全性</p>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200322100312353.png" alt="image-20200322100312353" style="zoom:50%;" />
+
+<p><strong>Ⅱ、需要认证的节点</strong></p>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200322100342463.png" alt="image-20200322100342463" style="zoom:50%;" />
+
+<p>两种类型：</p>
+<ul>
+<li><strong>Kubenetes 组件对 API Server 的访问：kubectl、Controller Manager、Scheduler、kubelet、kube-proxy</strong></li>
+<li><strong>Kubernetes 管理的 Pod 对容器的访问：Pod（dashborad 也是以 Pod 形式运行）</strong></li>
+</ul>
+<p>安全性说明：</p>
+<ul>
+<li><strong>Controller Manager、Scheduler 与 API Server 在同一台机器，所以直接使用 API Server 的非安全端口访问， <code>--insecure-bind-address=127.0.0.1</code></strong></li>
+<li><strong>kubectl、kubelet、kube-proxy 访问 API Server 就都需要证书进行 HTTPS 双向认证</strong></li>
+<li><strong>Pod 访问 API Server，SA</strong></li>
+</ul>
+<p>证书颁发：</p>
+<ul>
+<li><strong>手动签发：通过 k8s 集群的跟 ca 进行签发 HTTPS 证书</strong></li>
+<li><strong>自动签发：kubelet 首次访问 API Server 时，使用 token 做认证，通过后，Controller Manager 会为kubelet 生成一个证书，以后的访问都是用证书做认证了</strong></li>
+</ul>
+<p><strong>Ⅲ、kubeconfig</strong></p>
+<p><strong>kubeconfig 文件（.kube/config）包含集群参数（CA证书、API Server地址），客户端参数（上面生成的证书和私钥），集群context 信息（集群名称、用户名）。Kubenetes 组件通过启动时指定不同的 kubeconfig 文件可以切换到不同的集群。</strong></p>
+<p><strong>Ⅳ、ServiceAccount</strong></p>
+<p>Pod 中的容器访问 API Server。因为Pod的创建、销毁是动态的，所以要为它手动生成证书就不可行了。<strong>Kubenetes 使用了 Service Account解决 Pod 访问API Server的认证问题</strong>。</p>
+<p><strong>Ⅴ、Secret 与 SA 的关系</strong></p>
+<p>Kubernetes 设计了一种资源对象叫做 Secret，分为两类，一种是用于 ServiceAccount 的 service-account-token，另一种是用于保存用户自定义保密信息的 Opaque。ServiceAccount 中用到包含三个部分：Token、ca.crt、namespace。</p>
+<ul>
+<li><strong>token</strong>是使用 API Server 私钥签名的 JWT。用于访问API Server时，Server端认证</li>
+<li><strong>ca.crt</strong>，根证书。用于Client端验证API Server发送的证书</li>
+<li><strong>namespace</strong>, 标识这个service-account-token的作用域名空间</li>
+</ul>
+<p>Json web token（JWT），是为了在网络应用环境间传递声明而执行的一种基于 JSON 的开放标准（RFC 7519），该 token 被设计为紧凑且安全的，特别适用于分布式站点的单点登录（sso）场景。JWT 的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其他业务逻辑所必须的声明信息，该 token 也可直接被用于认证，也可被加密。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl get secret --all-namespaces</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl describe secret default-token-5gm9r --namespace=kube-system</span></span><br></pre></td></tr></table></figure>
+
+<p>默认情况下，每个 namespace 都会有一个 ServiceAccount，如果 Pod 在创建时没有指定 ServiceAccount，就会使用 Pod 所属的 namespace 的 ServiceAccount。</p>
+<p>默认挂载目录：/run/secret/kubernets.io/serviceaccount/</p>
+<p><strong>Ⅵ、总结</strong></p>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200322101017701.png" alt="image-20200322101017701" style="zoom:50%;" />
+
+
+
+<h1 id="3-鉴权-Authorization"><a href="#3-鉴权-Authorization" class="headerlink" title="3. 鉴权 Authorization"></a>3. 鉴权 Authorization</h1><p><strong>上面认证过程，只是确认通信的双方都确认了对方是可信的，可以相互通信。而鉴权是确定请求方有哪些资源的权限。</strong>API Server 目前支持以下几种授权策略 （通过 API Server 的启动参数 “–authorization-mode” 设置）</p>
+<ul>
+<li><strong>AlwaysDeny</strong>：表示拒绝所有的请求，一般用于测试。</li>
+<li><strong>AlwaysAllow</strong>：允许接收所有请求，如果集群不需要授权流程，则可以采用该策略。</li>
+<li><strong>ABAC（Attribute-Based Access Control</strong>）：基于属性的访问控制，表示使用用户配置的授权规则对用户请求进行匹配和控制。</li>
+<li><strong>Webbook</strong>：通过调用外部 REST 服务对用户进行授权。</li>
+<li><strong>RBAC（Role-Based Access Control）</strong>：基于角色的访问控制，<strong>现行默认规则</strong>。</li>
+</ul>
+<h2 id="3-1-RBAC-授权模式"><a href="#3-1-RBAC-授权模式" class="headerlink" title="3.1 RBAC 授权模式"></a>3.1 RBAC 授权模式</h2><p>RBAC（Role-Based Access Control）基于角色的访问控制，在 Kubernetes 1.5 中引入，<strong>现行版本成为默认标准</strong>。相对其它访问控制方式，拥有以下优势：</p>
+<ul>
+<li><strong>对集群中的资源和非资源均拥有完整的覆盖。</strong></li>
+<li><strong>整个 RBAC 完全由几个 API 对象完成，同其它 API 对象一样，可以用 kubectl 或 API 进行操作。</strong></li>
+<li><strong>可以在运行时进行调整，无需重启 API Server。</strong></li>
+</ul>
+<p><strong>Ⅰ、RBAC 的 API 资源对象说明</strong></p>
+<p>RBAC 引入了 4 个新的顶级资源对象：<strong>Role</strong>、<strong>ClusterRole</strong>、<strong>RoleBinding</strong>、<strong>ClusterRoleBinding</strong>，4 种对象类型均可以通过 kubectl 与 API 操作。</p>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200322101413438.png" alt="image-20200322101413438" style="zoom:50%;" />
+
+<p><strong>需要注意的是 Kubenetes 并不会提供用户管理（70：创建用户需要在linux系统中完成）</strong>，那么 User、Group、ServiceAccount 指定的用户又是从哪里来的呢？ Kubenetes 组件（kubectl、kube-proxy）或是其他自定义的用户在向 CA 申请证书时，需要提供一个证书请求文件</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"CN"</span>: <span class="string">"admin"</span>,</span><br><span class="line">  <span class="attr">"hosts"</span>: [],</span><br><span class="line">  <span class="attr">"key"</span>: &#123;</span><br><span class="line">    <span class="attr">"algo"</span>: <span class="string">"rsa"</span>,</span><br><span class="line">    <span class="attr">"size"</span>: <span class="number">2048</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"names"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"C"</span>: <span class="string">"CN"</span>,</span><br><span class="line">      <span class="attr">"ST"</span>: <span class="string">"HangZhou"</span>,</span><br><span class="line">      <span class="attr">"L"</span>: <span class="string">"XS"</span>,</span><br><span class="line">      <span class="attr">"O"</span>: <span class="string">"system:masters"</span>,</span><br><span class="line">      <span class="attr">"OU"</span>: <span class="string">"System"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>API Server会把客户端证书的CN 字段作为User，把names.O 字段作为Group。</strong></p>
+<p><strong>kubelet 使用 TLS Bootstaping 认证时，API Server 可以使用 Bootstrap Tokens 或者 Token authentication file 验证 =token，无论哪一种，Kubenetes 都会为 token 绑定一个默认的 User 和 Group。</strong></p>
+<p><strong>Pod 使用 ServiceAccount 认证时，service-account-token 中的 JWT 会保存 User 信息。</strong></p>
+<p><strong>有了用户信息，再创建一对角色/角色绑定(集群角色/集群角色绑定)资源对象，就可以完成权限绑定了。</strong></p>
+<h2 id="3-2-Role-and-ClusterRole"><a href="#3-2-Role-and-ClusterRole" class="headerlink" title="3.2 Role and ClusterRole"></a>3.2 Role and ClusterRole</h2><p><strong>在 RBAC API 中，Role 表示一组规则权限，权限只会增加(累加权限)，不存在一个资源一开始就有很多权限而通过 RBAC 对其进行减少的操作；Role 可以定义在一个 namespace 中，如果想要跨 namespace 则可以创建 ClusterRole。</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Role</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1beta1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-reader</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">apiGroups:</span> <span class="string">[""]</span> <span class="comment"># "" indicates the core API group</span></span><br><span class="line">    <span class="attr">resources:</span> <span class="string">["pods"]</span></span><br><span class="line">    <span class="attr">verbs:</span> <span class="string">["get",</span> <span class="string">"watch"</span><span class="string">,</span> <span class="string">"list"</span><span class="string">]</span></span><br></pre></td></tr></table></figure>
+
+<p>ClusterRole 具有与 Role 相同的权限角色控制能力，不同的是 ClusterRole 是集群级别的，ClusterRole 可以用于:</p>
+<ul>
+<li><strong>集群级别的资源控制( 例如 node 访问权限 )</strong></li>
+<li><strong>非资源型 endpoints( 例如 /healthz 访问 )</strong></li>
+<li><strong>所有命名空间资源控制(例如 pods )</strong></li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1beta1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="comment"># "namespace" omitted since ClusterRoles are not namespaced</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">secret-reader</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">apiGroups:</span> <span class="string">[""]</span></span><br><span class="line">    <span class="attr">resources:</span> <span class="string">["secrets"]</span></span><br><span class="line">    <span class="attr">verbs:</span> <span class="string">["get",</span> <span class="string">"watch"</span><span class="string">,</span> <span class="string">"list"</span><span class="string">]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-3-RoleBinding-and-ClusterRoleBinding"><a href="#3-3-RoleBinding-and-ClusterRoleBinding" class="headerlink" title="3.3 RoleBinding and ClusterRoleBinding"></a>3.3 RoleBinding and ClusterRoleBinding</h2><p><strong>RoloBinding 可以将角色中定义的权限授予用户或用户组，RoleBinding 包含一组权限列表(subjects)，权限列表中包含有不同形式的待授予权限资源类型(users, groups, or service accounts)；RoloBinding 同样包含对被Bind 的 Role 引用；RoleBinding 适用于某个命名空间内授权，而 ClusterRoleBinding 适用于集群范围内的授。</strong></p>
+<p>将 default 命名空间的 pod-reader Role 授予 jane 用户，此后 jane 用户在 default 命名空间中将具有 pod-reader 的权限。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">kind: RoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io&#x2F;v1beta1</span><br><span class="line">metadata:</span><br><span class="line">  name: read-pods</span><br><span class="line">  namespace: default</span><br><span class="line">subjects:</span><br><span class="line">  - kind: User</span><br><span class="line">    name: jane</span><br><span class="line">    apiGroup: rbac.authorization.k8s.io</span><br><span class="line">roleRef:</span><br><span class="line">  kind: Role</span><br><span class="line">  name: pod-reader</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br></pre></td></tr></table></figure>
+
+<p><strong>RoleBinding 同样可以引用 ClusterRole 来对当前 namespace 内用户、用户组或 ServiceAccount 进行授权，这种操作允许集群管理员在整个集群内定义一些通用的 ClusterRole，然后在不同的 namespace 中使用RoleBinding 来引用。</strong></p>
+<p>例如，以下 RoleBinding 引用了一个 ClusterRole，这个 ClusterRole 具有整个集群内对 secrets 的访问权限；但是其授权用户 dave 只能访问 development 空间中的 secrets（因为 RoleBinding 定义在 development 命名空间）。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># This role binding allows "dave" to read secrets in the "development" namespace.</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">RoleBinding</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1beta1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">read-secrets</span></span><br><span class="line">   <span class="comment"># This only grants permissions within the "development" namespace.</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">development</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">User</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">dave</span></span><br><span class="line">    <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">secret-reader</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br></pre></td></tr></table></figure>
+
+<p>使用 ClusterRoleBinding 可以对整个集群中的所有命名空间资源权限进行授权；以下 ClusterRoleBinding 样例展示了授权 manager 组内所有用户在全部命名空间中对 secrets 进行访问</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># This cluster role binding allows anyone in the "manager" group to read secrets in any namespace.</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1beta1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">read-secrets-global</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">Group</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">manager</span></span><br><span class="line">    <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">secret-reader</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-4-Resources"><a href="#3-4-Resources" class="headerlink" title="3.4 Resources"></a>3.4 Resources</h2><p><strong>Kubernetes 集群内一些资源一般以其名称字符串来表示，这些字符串一般会在 API 的 URL 地址中出现；同时某些资源也会包含子资源</strong>，例如 logs 资源就属于 pods 的子资源，API 中 URL 样例如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;api&#x2F;v1&#x2F;namespaces&#x2F;&#123;namespace&#125;&#x2F;pods&#x2F;&#123;name&#125;&#x2F;log</span><br></pre></td></tr></table></figure>
+
+<p><strong>如果要在 RBAC 授权模型中控制这些子资源的访问权限，可以通过 / 分隔符来实现</strong>，以下是一个定义 pods 资资源 logs 访问权限的 Role 定义样例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Role</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1beta1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-and-pod-logs-reader</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">apiGroups:</span> <span class="string">[""]</span></span><br><span class="line">    <span class="attr">resources:</span> <span class="string">["pods/log"]</span></span><br><span class="line">    <span class="attr">verbs:</span> <span class="string">["get",</span> <span class="string">"list"</span><span class="string">]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-5-to-Subjects"><a href="#3-5-to-Subjects" class="headerlink" title="3.5 to Subjects"></a>3.5 to Subjects</h2><p><strong>RoleBinding 和 ClusterRoleBinding 可以将 Role 绑定到 Subjects；Subjects 可以是 groups、users 或者 service accounts。</strong></p>
+<p>Subjects 中 Users 使用字符串表示，它可以是一个普通的名字字符串，如 “alice”；也可以是 email 格式的邮箱地址，如 “<a href="mailto:wangyanglinux@163.com">wangyanglinux@163.com</a>”；甚至是一组字符串形式的数字 ID 。但是 Users 的前缀 <strong>system:</strong> 是系统保留的，集群管理员应该确保普通用户不会使用这个前缀格式。</p>
+<p>Groups 书写格式与 Users 相同，都为一个字符串，并且没有特定的格式要求；同样 system: 前缀为系统保留。</p>
+<p><strong>实践：创建一个用户只能管理 dev 空间</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"CN"</span>: <span class="string">"devuser"</span>,</span><br><span class="line">  <span class="attr">"hosts"</span>: [],</span><br><span class="line">  <span class="attr">"key"</span>: &#123;</span><br><span class="line">    <span class="attr">"algo"</span>: <span class="string">"rsa"</span>,</span><br><span class="line">    <span class="attr">"size"</span>: <span class="number">2048</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"names"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"C"</span>: <span class="string">"CN"</span>,</span><br><span class="line">      <span class="attr">"ST"</span>: <span class="string">"BeiJing"</span>,</span><br><span class="line">      <span class="attr">"L"</span>: <span class="string">"BeiJing"</span>,</span><br><span class="line">      <span class="attr">"O"</span>: <span class="string">"k8s"</span>,</span><br><span class="line">      <span class="attr">"OU"</span>: <span class="string">"System"</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 下载证书生成工具</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mv cfssl_linux-amd64 /usr/<span class="built_in">local</span>/bin/cfssl</span></span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64</span></span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> mv cfssljson_linux-amd64 /usr/<span class="built_in">local</span>/bin/cfssljson</span></span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mv cfssl-certinfo_linux-amd64 /usr/<span class="built_in">local</span>/bin/cfssl-certinfo</span></span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> /etc/kubernetes/pki/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> cfssl gencert -ca=ca.crt -ca-key=ca.key -profile=kubernetes /root/devuser-csr.json | cfssljson -bare devuser</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置集群参数</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">export</span> KUBE_APISERVER=<span class="string">"https://172.20.0.113:6443"</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl config <span class="built_in">set</span>-cluster kubernetes \</span></span><br><span class="line">--certificate-authority=/etc/kubernetes/ssl/ca.pem \</span><br><span class="line">--embed-certs=true \</span><br><span class="line">--server=$&#123;KUBE_APISERVER&#125; \</span><br><span class="line">--kubeconfig=devuser.kubeconfig</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置客户端认证参数</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl config <span class="built_in">set</span>-credentials devuser \</span></span><br><span class="line">--client-certificate=/etc/kubernetes/ssl/devuser.pem \</span><br><span class="line">--client-key=/etc/kubernetes/ssl/devuser-key.pem \</span><br><span class="line">--embed-certs=true \</span><br><span class="line">--kubeconfig=devuser.kubeconfig</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置上下文参数</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl config <span class="built_in">set</span>-context kubernetes \</span></span><br><span class="line">--cluster=kubernetes \</span><br><span class="line">--user=devuser \</span><br><span class="line">--namespace=dev \</span><br><span class="line">--kubeconfig=devuser.kubeconfig</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置默认上下文</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl config use-context kubernetes --kubeconfig=devuser.kubeconfig</span></span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp -f ./devuser.kubeconfig /home/devuser/.kube/config</span></span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create rolebinding devuser-admin-binding --clusterrole=admin --user=devuser --namespace=dev</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="4-准入控制-Admission-Control"><a href="#4-准入控制-Admission-Control" class="headerlink" title="4. 准入控制 Admission Control"></a>4. 准入控制 Admission Control</h1><p><strong>准入控制是 API Server 的插件集合，通过添加不同的插件，实现额外的准入控制规则。</strong>甚至于API Server的一些主要的功能都需要通过 Admission Controllers 实现，比如 ServiceAccount。</p>
+<p>官方文档上有一份针对不同版本的准入控制器推荐列表，其中最新的 1.14 的推荐列表是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota</span><br></pre></td></tr></table></figure>
+
+<p>列举几个插件的功能：</p>
+<ul>
+<li><strong>NamespaceLifecycle</strong>： 防止在不存在的 namespace 上创建对象，防止删除系统预置 namespace，删除 namespace 时，连带删除它的所有资源对象。</li>
+<li><strong>LimitRanger</strong>：确保请求的资源不会超过资源所在 Namespace 的 LimitRange 的限制。</li>
+<li><strong>ServiceAccount</strong>： 实现了自动化添加 ServiceAccount。</li>
+<li><strong>ResourceQuota</strong>：确保请求的资源不会超过资源的 ResourceQuota 限制。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/微信收款码.jpg" alt="Zheng 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/支付宝收款码.jpg" alt="Zheng 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/07/kubernetes%E7%AC%94%E8%AE%B0/7.Kubernetes%E9%9B%86%E7%BE%A4%E8%B0%83%E5%BA%A6/" rel="next" title="七、Kubernets 集群调度">
+                <i class="fa fa-chevron-left"></i> 七、Kubernets 集群调度
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/09/kubernetes%E7%AC%94%E8%AE%B0/9.Helm%E5%8F%8A%E5%85%B6%E5%AE%83%E5%8A%9F%E8%83%BD%E6%80%A7%E7%BB%84%E4%BB%B6/" rel="prev" title="九、Helm 及其他功能性组件">
+                九、Helm 及其他功能性组件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+  <script>
+    window._bd_share_config = {
+      "common": {
+        "bdText": "",
+        "bdMini": "1",
+        "bdMiniList": false,
+        "bdPic": ""
+      },
+      "image": {
+        "viewList": ["tsina", "douban", "sqq", "qzone", "weixin", "twi", "fbook"],
+        "viewText": "分享到：",
+        "viewSize": "16"
+      },
+      "slide": {
+        "bdImg": "5",
+        "bdPos": "left",
+        "bdTop": "100"
+      }
+    }
+  </script>
+
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDE0OC8xMDY4NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/demo.jpg"
+                alt="Zheng" />
+            
+              <p class="site-author-name" itemprop="name">Zheng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/love70" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-机制说明"><span class="nav-number">1.</span> <span class="nav-text">1. 机制说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-认证-Authentication"><span class="nav-number">2.</span> <span class="nav-text">2. 认证 Authentication</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-鉴权-Authorization"><span class="nav-number">3.</span> <span class="nav-text">3. 鉴权 Authorization</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-RBAC-授权模式"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 RBAC 授权模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-Role-and-ClusterRole"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Role and ClusterRole</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-RoleBinding-and-ClusterRoleBinding"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 RoleBinding and ClusterRoleBinding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-Resources"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 Resources</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-to-Subjects"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 to Subjects</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-准入控制-Admission-Control"><span class="nav-number">4.</span> <span class="nav-text">4. 准入控制 Admission Control</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zheng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/canvas_lines.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("nB3bSL0ilFthw62j0k6C5CXR-gzGzoHsz", "YhNf2pmy8UbaPT8sUhKasOGI");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

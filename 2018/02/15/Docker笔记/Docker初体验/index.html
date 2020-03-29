@@ -96,24 +96,18 @@
 
 
 
-<meta name="description" content="认识与入门MarkDown博客的编写使用的是Markdown标记语言。Markdown是一种轻量级的「标记语言」，它的优点很多，目前也被越来越多的写作爱好者，撰稿者广泛使用。看到这里请不要被「标记」、「语言」所迷惑，Markdown的语法十分简单。常用的标记符号也不超过十个，这种相对于更为复杂的HTML标记语言来说，Markdown可谓是十分轻量的，学习成本也不需要太多，且一旦熟悉这种语法规则，">
+<meta name="description" content="写在前面这学期有机会接触了一些深度学习方面的知识，虽说即将就要踏上自娱自乐的网络之路了，面对当下如此火热的炼丹行业，兴趣广泛的我自然也是要一窥究竟。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="博客的编写与发布">
-<meta property="og:url" content="love70.github.io/2018/02/13/%E5%8D%9A%E5%AE%A2%E7%9A%84%E7%BC%96%E5%86%99%E4%B8%8E%E5%8F%91%E5%B8%83/index.html">
+<meta property="og:title" content="Docker初体验">
+<meta property="og:url" content="love70.github.io/2018/02/15/Docker%E7%AC%94%E8%AE%B0/Docker%E5%88%9D%E4%BD%93%E9%AA%8C/index.html">
 <meta property="og:site_name" content="love70&#39;s Blog">
-<meta property="og:description" content="认识与入门MarkDown博客的编写使用的是Markdown标记语言。Markdown是一种轻量级的「标记语言」，它的优点很多，目前也被越来越多的写作爱好者，撰稿者广泛使用。看到这里请不要被「标记」、「语言」所迷惑，Markdown的语法十分简单。常用的标记符号也不超过十个，这种相对于更为复杂的HTML标记语言来说，Markdown可谓是十分轻量的，学习成本也不需要太多，且一旦熟悉这种语法规则，">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/3-1.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/3-2.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/3-3.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/3-4.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/3-5.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/3-6.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/3-7.png">
-<meta property="article:published_time" content="2018-02-13T04:27:38.000Z">
-<meta property="article:modified_time" content="2018-02-14T05:03:30.956Z">
+<meta property="og:description" content="写在前面这学期有机会接触了一些深度学习方面的知识，虽说即将就要踏上自娱自乐的网络之路了，面对当下如此火热的炼丹行业，兴趣广泛的我自然也是要一窥究竟。">
+<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180215162524.png">
+<meta property="article:published_time" content="2018-02-15T02:51:07.000Z">
+<meta property="article:modified_time" content="2020-03-29T05:15:40.759Z">
 <meta property="article:author" content="Zheng">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://oxtgpqjno.bkt.clouddn.com/3-1.png">
+<meta name="twitter:image" content="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180215162524.png">
 
 
 
@@ -143,7 +137,7 @@
 
 
 
-  <link rel="canonical" href="love70.github.io/2018/02/13/博客的编写与发布/"/>
+  <link rel="canonical" href="love70.github.io/2018/02/15/Docker笔记/Docker初体验/"/>
 
 
 
@@ -158,7 +152,7 @@
   daovoice('update');
   </script>
 
-  <title>博客的编写与发布 | love70's Blog</title>
+  <title>Docker初体验 | love70's Blog</title>
   
 
 
@@ -224,7 +218,7 @@
       
         
         <li class="menu-item menu-item-home">
-          <a href="/%20" rel="section">
+          <a href="/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
@@ -234,7 +228,7 @@
       
         
         <li class="menu-item menu-item-categories">
-          <a href="/categories/%20" rel="section">
+          <a href="/categories/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
@@ -244,7 +238,7 @@
       
         
         <li class="menu-item menu-item-archives">
-          <a href="/archives/%20" rel="section">
+          <a href="/archives/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
@@ -254,7 +248,7 @@
       
         
         <li class="menu-item menu-item-about">
-          <a href="/about/%20" rel="section">
+          <a href="/about/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
@@ -329,7 +323,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="love70.github.io/2018/02/13/%E5%8D%9A%E5%AE%A2%E7%9A%84%E7%BC%96%E5%86%99%E4%B8%8E%E5%8F%91%E5%B8%83/">
+    <link itemprop="mainEntityOfPage" href="love70.github.io/2018/02/15/Docker%E7%AC%94%E8%AE%B0/Docker%E5%88%9D%E4%BD%93%E9%AA%8C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zheng">
@@ -346,7 +340,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">博客的编写与发布</h2>
+          <h2 class="post-title" itemprop="name headline">Docker初体验</h2>
         
 
         <div class="post-meta">
@@ -358,8 +352,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-13T12:27:38+08:00">
-                2018-02-13
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-15T10:51:07+08:00">
+                2018-02-15
               </time>
             
 
@@ -381,8 +375,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
+                  <a href="/categories/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
                   </a>
                 </span>
 
@@ -398,7 +392,7 @@
 
           
           
-             <span id="/2018/02/13/%E5%8D%9A%E5%AE%A2%E7%9A%84%E7%BC%96%E5%86%99%E4%B8%8E%E5%8F%91%E5%B8%83/" class="leancloud_visitors" data-flag-title="博客的编写与发布">
+             <span id="/2018/02/15/Docker%E7%AC%94%E8%AE%B0/Docker%E5%88%9D%E4%BD%93%E9%AA%8C/" class="leancloud_visitors" data-flag-title="Docker初体验">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -423,7 +417,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.3k
+                  2.1k
                 </span>
               
 
@@ -439,7 +433,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4
+                  8
                 </span>
               
             </div>
@@ -461,47 +455,44 @@
 
       
         <hr>
-<h1 id="认识与入门MarkDown"><a href="#认识与入门MarkDown" class="headerlink" title="认识与入门MarkDown"></a>认识与入门MarkDown</h1><p>博客的编写使用的是Markdown标记语言。Markdown是一种轻量级的「标记语言」，它的优点很多，目前也被越来越多的写作爱好者，撰稿者广泛使用。看到这里请不要被「标记」、「语言」所迷惑，Markdown的语法十分简单。常用的标记符号也不超过十个，这种相对于更为复杂的HTML标记语言来说，Markdown可谓是十分轻量的，学习成本也不需要太多，且一旦熟悉这种语法规则，会有一劳永逸的效果。</p>
+<h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><p>这学期有机会接触了一些深度学习方面的知识，虽说即将就要踏上自娱自乐的网络之路了，面对当下如此火热的炼丹行业，兴趣广泛的我自然也是要一窥究竟。</p>
 <a id="more"></a>
 
-<h2 id="Markdown官方文档"><a href="#Markdown官方文档" class="headerlink" title="Markdown官方文档"></a>Markdown官方文档</h2><p>这里可以看到官方的Markdown语法规则文档，当然，后文我也会用自己的方式，阐述这些语法在实际使用中的用法。</p>
+<p>在部署炼丹环境时，偶然接触到了Docker，了解到Docker是今年来非常火的容器技术，顺便也就学习了一波，毕竟技多不压身啊！其实对于一项技术，学习最直接的方式就是去它的官网上进行学习，docker也不例外，在其官网上有详细的学习资料，唯一的障碍可能就是语言关了，鼓励英语好的同志直接移步其官网进行学习: <a href="https://docs.docker.com/" target="_blank" rel="noopener">https://docs.docker.com/</a>。</p>
+<p>这篇文章是我边学习边写下的，我也是docker的初学者，并没有丰富的使用经验，所以内容若有不妥，请大家指正，希望日后能不断完善。</p>
+<h1 id="什么是Docker"><a href="#什么是Docker" class="headerlink" title="什么是Docker"></a>什么是Docker</h1><p>Docker用Go语言开发实现，基于Linux内核的cgroup，namespace，和AUFS类的Union FS等技术，对进程进行封装隔离，属于操作系统层面的虚拟化技术。由于隔离的进程独立于宿主和其它的隔离的进程，因此也称其为容器。Docker 在容器的基础上，进行了进一步的封装，从文件系统、网络互联到进程隔离等等，极大的简化了容器的创建和维护。使得 Docker 技术比虚拟机技术更为轻便、快捷。</p>
+<h1 id="Docker概念"><a href="#Docker概念" class="headerlink" title="Docker概念"></a>Docker概念</h1><p>Docker是开发人员和系统管理员使用容器<strong>开发、部署和运行应用程序</strong>的平台。使用Linux容器来部署应用程序成为<strong>集装箱化</strong>。容器不是新的，但他们用于轻松部署应用程序。<br>Docker由下面几样东西组成，先简单认识一下：</p>
 <ul>
-<li><a href="https://daringfireball.net/projects/markdown/syntax" target="_blank" rel="noopener">创始人John Gruber的Markdown语法说明</a></li>
-<li><a href="http://wowubuntu.com/markdown/#list" target="_blank" rel="noopener">Markdown中文版语法说明</a></li>
+<li><strong>Docker Client</strong>：Docker提供给用户的客户端。Docker Client提供给用户一个终端，用户输入Docker提供的命令来管理本地或者远程的服务器。</li>
+<li><strong>Docker Daemon</strong>：Docker服务的守护进程。每台服务器（物理机或虚拟机）上只要安装了Docker的环境，基本上就跑了一个后台程序Docker Daemon，Docker Daemon会接收Docker Client发过来的指令,并对服务器的进行具体操作。</li>
+<li><strong>Docker Images</strong>：俗称Docker的镜像，一个独立的文件系统，类似虚拟机里的镜像，包含运行时需要的系统、软件、代码、库、环境变量、配置文件等。</li>
+<li><strong>Docker Registry</strong>：这个可认为是Docker Images的仓库，就像git的仓库一样，用来管理Docker镜像的，提供了Docker镜像的上传、下载和浏览等功能，并且提供安全的账号管理可以管理只有自己可见的私人image。就像git的仓库一样，docker也提供了官方的Registry，叫做<strong>Dock Hub</strong>(<a href="http://hub.Docker.com" target="_blank" rel="noopener">http://hub.Docker.com</a>)</li>
+<li><strong>Docker Container</strong>：俗称Docker的容器，这个是最关键的东西了。Docker Container是真正跑项目程序、消耗机器资源、提供服务的地方，Docker Container通过Docker Images启动，在Docker Images的基础上运行你需要的代码。 你<strong>可以认为Docker Container提供了系统硬件环境，然后使用了Docker Images这些制作好的系统盘，再加上你的项目代码，跑起来就可以提供服务了。</strong> 听到这里，可能你会觉得是不是有点像一个VM利用保存的备份或者快照跑起来环境一样，其实是挺像的，但是实际上是有本质的区别，之后会提到。</li>
 </ul>
-<h2 id="使用Markdown的优点"><a href="#使用Markdown的优点" class="headerlink" title="使用Markdown的优点"></a>使用Markdown的优点</h2><ul>
-<li>专注你的文字内容而不是排版样式。</li>
-<li>轻松的导出 HTML、PDF 和本身的 .md 文件。</li>
-<li>纯文本内容，兼容所有的文本编辑器与字处理软件。</li>
-<li>可读，直观。适合所有人的写作语言。</li>
-</ul>
-<h2 id="用什么工具"><a href="#用什么工具" class="headerlink" title="用什么工具"></a>用什么工具</h2><p>推荐<a href="https://www.typora.io/" target="_blank" rel="noopener">Typora</a>、<a href="https://www.zybuluo.com/cmd/" target="_blank" rel="noopener">Cmd Markdown</a>等，在各编辑器中一般都会有关于Markdown语法的说明，遗忘时随时查看即可。</p>
-<h1 id="博客编写与发布"><a href="#博客编写与发布" class="headerlink" title="博客编写与发布"></a>博客编写与发布</h1><h2 id="新建博客文章"><a href="#新建博客文章" class="headerlink" title="新建博客文章"></a>新建博客文章</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new &quot;postName&quot; #新建文章</span><br></pre></td></tr></table></figure>
-<p>实例：新建博客《搭建我的第一个博客》</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new &quot;搭建我的第一个博客&quot;</span><br></pre></td></tr></table></figure>
-<p>到站点目录下的/source/_posts/目录下可以看到生成了名为：搭建我的第一个博客.md的文件，这是Markdown格式的文件，可以用sublime text3或者notepad++等编辑器打开，也可以下载一个上述的Markdown编辑器来编辑Markdown文件。</p>
-<h2 id="编辑博客"><a href="#编辑博客" class="headerlink" title="编辑博客"></a>编辑博客</h2><p>Hexo默认新建的文章抬头已有title、date、tags等属性，可能缺乏categories和meta标签，想要指定目录就需要添加categories属性，而meta标签则是为了便于搜索引擎的收录。如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: 搭建我的第一个博客</span><br><span class="line">date: 2017-10-15 20:41</span><br><span class="line">categories: Hexo</span><br><span class="line">comments: true</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-<p>categories字段，对博客进行分类管理，然后点击主页左侧菜单的分类就可看到具体的分类。</p>
-<p><strong>如何实现上图的阅读全文功能？</strong><br>在自己喜欢的位置添加一个：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--more--&gt;</span><br></pre></td></tr></table></figure>
-<p>即可，主题会自动识别这个标签，生成对应的阅读全文按钮。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">以上是文章摘要</span><br><span class="line">&lt;!--more--&gt;</span><br><span class="line">以下是余下全文</span><br></pre></td></tr></table></figure>
-
-<h2 id="发布博客"><a href="#发布博客" class="headerlink" title="发布博客"></a>发布博客</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean  #清除缓存 网页正常情况下可以忽略此条命令</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate  #生成静态页面至public目录</span><br></pre></td></tr></table></figure>
-<p>写好之后可以现在本地预览，确定无误之后再部署到Github上。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server  #开启预览访问端口（默认端口4000，&#39;ctrl + c&#39;关闭server）</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy  #将.deploy目录部署到GitHub</span><br></pre></td></tr></table></figure>
-<p>需要说明的是：<br>我们博客文章的编写都是Markdown文件，但是发布到github上的其实是html文件，将Markdown转换成html这个工作我们只要输入hexo generate命令即可，hexo会帮我们完成转换。</p>
-<p><strong>hexo命令简写形式</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo n &quot;我的博客&quot; &#x3D;&#x3D; hexo new &quot;我的博客&quot;</span><br><span class="line">hexo g &#x3D;&#x3D; hexo generate</span><br><span class="line">hexo s &#x3D;&#x3D; hexo server</span><br><span class="line">hexo d &#x3D;&#x3D; hexo deploy</span><br></pre></td></tr></table></figure>
-
-<h1 id="博客图片存放"><a href="#博客图片存放" class="headerlink" title="博客图片存放"></a>博客图片存放</h1><p>Markdown编辑器支持插入图片，可以直接给出图片的链接，因此我们可以将图片存放在我们hexo项目的目录下，再填写对应的路径，也可以将其存放在云服务器上，然后给出链接。</p>
-<p>在这里，我们介绍使用七牛云来进行图片托管。七牛云是国内领先的企业级云服务商,致力于打造以数据为核心的场景化PaaS服务，图片加载速度还不错，一般也不会出现图片挂掉的情况。</p>
-<h2 id="注册账号"><a href="#注册账号" class="headerlink" title="注册账号"></a>注册账号</h2><p>注册申请一个个人账号，然后激活邮箱完成注册。<br>官网地址：<a href="http://www.qiniu.com/" target="_blank" rel="noopener">http://www.qiniu.com/</a></p>
-<h2 id="存储图片"><a href="#存储图片" class="headerlink" title="存储图片"></a>存储图片</h2><p>（1）点击左侧菜单的对象存储<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-1.png" alt="此处输入图片的描述"><br>（2）点击上端的添加来创建存储空间<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-2.png" alt="此处输入图片的描述"><br>（3）填写好基本信息，点击确定创建<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-3.png" alt="此处输入图片的描述"><br>（4）来到新创建的存储空间，点击内容管理<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-4.png" alt="此处输入图片的描述"><br>（5）在内容管理中可以看到文件列表，点击上传文件<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-5.png" alt="此处输入图片的描述"><br>（6）可以设置上传的文件的前缀，以便进行分类管理<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-6.png" alt="此处输入图片的描述"><br>（7）点击关闭，回到内容管理页面查看上传的文件，复制图片链接<br><img src="http://oxtgpqjno.bkt.clouddn.com/3-7.png" alt="此处输入图片的描述"><br>至此，我们就将我们博客需要的图片存储到了七牛云，然后我们只要将复制的图片链接插入到博客人文章中即可显示图片，感觉显示速度还是蛮快的。</p>
-<p>以上简单介绍了Markdown标记语言，博客的搭建与编写以及博客中图片的插入。此外，为使我们的博客更加的美观，我们还需进行Hexo的站点配置、主题配置和使用以及一些第三方服务的使用。</p>
+<h1 id="镜像和容器"><a href="#镜像和容器" class="headerlink" title="镜像和容器"></a>镜像和容器</h1><p>容器通过运行镜像来启动。<strong>镜像</strong>是一个可执行程序包，其中包含运行应用程序所需的所有内容-the code, a runtime, libraries, environment variables, and configuration files。</p>
+<p><strong>容器</strong>是镜像runtime实例-执行时镜像在内存中的内容(即具有状态或用户进程的镜像)。你可以使用命令<code>docker ps</code>查看正在运行的容器的列表，就像在Linux中一样。</p>
+<h1 id="容器和虚拟机"><a href="#容器和虚拟机" class="headerlink" title="容器和虚拟机"></a>容器和虚拟机</h1><p>一个<strong>容器</strong>在Linux上本地运行，并与其它容器共享主机的内核(共享同一个操作系统)。它运行一个独立的进程，不占用任何其它可执行文件的内存，使其轻量化。</p>
+<p>相比之下，<strong>虚拟机</strong>(VM)运行一个完整的“guest”操作系统，通过虚拟机管理程序虚拟访问主机资源。一般来说，虚拟机提供的环境比大多数应用程序需要的资源更多。<br><img src="http://oxtgpqjno.bkt.clouddn.com/TIM%E6%88%AA%E5%9B%BE20180215162524.png" alt="此处输入图片的描述"></p>
+<h1 id="Docker是怎么玩的？"><a href="#Docker是怎么玩的？" class="headerlink" title="Docker是怎么玩的？"></a>Docker是怎么玩的？</h1><p>一下接触这么多东西肯定有一些晕吧，没关系，我们把这些串起来走一遍就会了。</p>
+<ol>
+<li>首先你得安装一下docker的环境，针对你的系统安装对应的版本，具体查看docker的官网<a href="http://www.docker.com/products/docker" target="_blank" rel="noopener">http://www.docker.com/products/docker</a>。(我是在windows平台上进行学习的)</li>
+<li>安装好后，我们在terminal中就有了docker的命令了，所有的操作都是通过docker命令完成的。比如: <code>docker version</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker version</span><br><span class="line">Client:</span><br><span class="line"> Version:       17.12.0-ce</span><br><span class="line"> API version:   1.35</span><br><span class="line"> Go version:    go1.9.2</span><br><span class="line"> Git commit:    c97c6d6</span><br><span class="line"> Built: Wed Dec 27 20:05:22 2017</span><br><span class="line"> OS&#x2F;Arch:       windows&#x2F;amd64</span><br><span class="line"></span><br><span class="line">Server:</span><br><span class="line"> Engine:</span><br><span class="line">  Version:      17.12.0-ce</span><br><span class="line">  API version:  1.35 (minimum version 1.12)</span><br><span class="line">  Go version:   go1.9.2</span><br><span class="line">  Git commit:   c97c6d6</span><br><span class="line">  Built:        Wed Dec 27 20:12:29 2017</span><br><span class="line">  OS&#x2F;Arch:      linux&#x2F;amd64</span><br><span class="line">  Experimental: true</span><br></pre></td></tr></table></figure>
+查看一下我们拥有哪些images吧: <code>docker images</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker images</span><br><span class="line">REPOSITORY          TAG             IMAGE ID            CREATED             SIZE</span><br><span class="line">job1                latest          de714ebe3a54        29 hours ago        1.093 MB</span><br><span class="line">ubuntu              latest          f753707788c5        3 weeks ago         127.2 MB</span><br><span class="line">busybox             latest          e02e811dd08f        4 weeks ago         1.093 MB</span><br></pre></td></tr></table></figure>
+再查看一下我们有哪些Docker Container吧: <code>docker ps</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker ps</span><br><span class="line">CONTAINER ID        IMAGE           COMMAND             CREATED</span><br><span class="line">2c08ddb62c77        ubuntu          &quot;&#x2F;bin&#x2F;bash&quot;         28 hours ago</span><br><span class="line">5aa853bdb033        ubuntu          &quot;&#x2F;bin&#x2F;bash&quot;         28 hours ago</span><br></pre></td></tr></table></figure>
+这里看到的都是正在运行的Continer，如果要查看所有的Container就使用<code>docker ps -a</code></li>
+</ol>
+<p>下面我们从Docker hub的Registry下载一个Image，命令: <code>docker pull image-name</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker pull hello-world</span><br><span class="line">Using default tag: latest</span><br><span class="line">latest: Pulling from library&#x2F;hello-world</span><br><span class="line">ca4f61b1923c: Pull complete</span><br><span class="line">Digest: sha256:083de497cff944f969d8499ab94f07134c50bcf5e6b9559b27182d3fa80ce3f7</span><br><span class="line">Status: Downloaded newer image for hello-world:latest</span><br></pre></td></tr></table></figure>
+<p>在看一下现在的images: <code>docker image</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker images</span><br><span class="line">REPOSITORY          TAG             IMAGE ID            CREATED             SIZE</span><br><span class="line">job1                latest          de714ebe3a54        29 hours ago        1.093 MB</span><br><span class="line">ubuntu              latest          f753707788c5        3 weeks ago         127.2 MB</span><br><span class="line">busybox             latest          e02e811dd08f        4 weeks ago         1.093 MB</span><br><span class="line">hello-world         latest          c54a2cc56cbb        4 months ago        1.848 kB</span><br></pre></td></tr></table></figure>
+<p>可以看到我们刚从docker hub上面下载了一个docker官方已经制作好的叫做hello-world的image，下载完成后，就在本地可以查看到这个image了。</p>
+<p>我们把hello-world放到一个docker container里面让它跑起来: <code>docker run image-name</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker run hello-world</span><br><span class="line"></span><br><span class="line">Hello from Docker!</span><br><span class="line">This message shows that your installation appears to be working correctly.</span><br><span class="line"></span><br><span class="line">To generate this message, Docker took the following steps:</span><br><span class="line"> 1. The Docker client contacted the Docker daemon.</span><br><span class="line"> 2. The Docker daemon pulled the &quot;hello-world&quot; image from the Docker Hub.</span><br><span class="line">    (amd64)</span><br><span class="line"> 3. The Docker daemon created a new container from that image which runs the</span><br><span class="line">    executable that produces the output you are currently reading.</span><br><span class="line"> 4. The Docker daemon streamed that output to the Docker client, which sent it</span><br><span class="line">    to your terminal.</span><br></pre></td></tr></table></figure>
+<p>这个image运行后很简单，就是打印了这段话。告诉我们，我们已经成功的让docker daemon从docker hub上拉了一个”hello-world”的image，并且通过这个image创建了一个container，并且通过daemon将输出的内容传回了docker client，也就是我们现在看到的这段话。</p>
+<p>我们最后再看一下是否真的创建了docker container: <code>docker ps -a</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\love_70&gt;docker ps -a</span><br><span class="line">CONTAINER ID    IMAGE        COMMAND      CREATED           STATUS</span><br><span class="line">3d9b24449cb3    hello-world  &quot;&#x2F;hello&quot;     9 minutes ago     Exited (0) 9 minutes ago</span><br><span class="line">c08ddb62c77     ubuntu       &quot;&#x2F;bin&#x2F;bash&quot;  28 hours ago      Up 28 hours</span><br></pre></td></tr></table></figure>
+<p>可以看到，确实已经创建了docker container了，可见<code>docker run</code>的命令实际上是create和start的结合命令，基于hello-world的image创建并启动了container。container启动后执行了打印的程序，打印完上面我们看到的那句话，程序执行完成，container也会跟着关闭了。从STATUS可以看到，在9分钟之前hello-world的这个container已经exited了。</p>
+<p>通过上面的步骤，我们大概知道docker是怎么玩的了。初步的印象可能会觉得和现在的VM的部署方式也挺像的，比如docker image就是一个系统备份文件，docker container就是一个跑起来的VM，那docker到底又有什么特别的呢？下一次再来分析。</p>
 
       
     </div>
@@ -555,8 +546,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/10/15/%E6%90%AD%E5%BB%BA%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2/" rel="next" title="搭建我的第一个博客">
-                <i class="fa fa-chevron-left"></i> 搭建我的第一个博客
+              <a href="/2018/02/14/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0/%E5%8D%9A%E5%AE%A2%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D/" rel="next" title="博客绑定域名">
+                <i class="fa fa-chevron-left"></i> 博客绑定域名
               </a>
             
           </div>
@@ -565,8 +556,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/02/13/%E5%8D%9A%E5%AE%A2%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE/" rel="prev" title="博客相关配置">
-                博客相关配置 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/02/19/Docker%E7%AC%94%E8%AE%B0/Docker%E8%A7%A3%E6%9E%90/" rel="prev" title="Docker解析">
+                Docker解析 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -678,9 +669,9 @@
             
               <div class="site-state-item site-state-posts">
               
-                <a href="/archives/%20%7C%7C%20archive">
+                <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -690,10 +681,10 @@
               
               
               <div class="site-state-item site-state-categories">
-                
-                  <span class="site-state-item-count">2</span>
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">分类</span>
-                
+                </a>
               </div>
             
 
@@ -736,7 +727,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#认识与入门MarkDown"><span class="nav-number">1.</span> <span class="nav-text">认识与入门MarkDown</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Markdown官方文档"><span class="nav-number">1.1.</span> <span class="nav-text">Markdown官方文档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Markdown的优点"><span class="nav-number">1.2.</span> <span class="nav-text">使用Markdown的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用什么工具"><span class="nav-number">1.3.</span> <span class="nav-text">用什么工具</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#博客编写与发布"><span class="nav-number">2.</span> <span class="nav-text">博客编写与发布</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新建博客文章"><span class="nav-number">2.1.</span> <span class="nav-text">新建博客文章</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编辑博客"><span class="nav-number">2.2.</span> <span class="nav-text">编辑博客</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发布博客"><span class="nav-number">2.3.</span> <span class="nav-text">发布博客</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#博客图片存放"><span class="nav-number">3.</span> <span class="nav-text">博客图片存放</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#注册账号"><span class="nav-number">3.1.</span> <span class="nav-text">注册账号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存储图片"><span class="nav-number">3.2.</span> <span class="nav-text">存储图片</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#写在前面"><span class="nav-number">1.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是Docker"><span class="nav-number">2.</span> <span class="nav-text">什么是Docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker概念"><span class="nav-number">3.</span> <span class="nav-text">Docker概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#镜像和容器"><span class="nav-number">4.</span> <span class="nav-text">镜像和容器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#容器和虚拟机"><span class="nav-number">5.</span> <span class="nav-text">容器和虚拟机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker是怎么玩的？"><span class="nav-number">6.</span> <span class="nav-text">Docker是怎么玩的？</span></a></li></ol></div>
             
 
           </div>

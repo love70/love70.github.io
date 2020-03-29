@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1. ConfigMap1.1 ConfigMap 介绍ConfigMap 功能在 Kubernetes 1.2版本中引入，许多应用程序会从配置文件、命令行参数或环境变量中读取配置信息。ConfigMap API 给我们提供了向容器中注入配置信息的机制，ConfigMap 可以被用来保存单个属性，也可以用来保存整个配置文件或者 JSON 二进制大对象。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="六、Kubernetes 存储">
+<meta property="og:url" content="love70.github.io/2020/03/06/kubernetes%E7%AC%94%E8%AE%B0/6.Kubernetes%E5%AD%98%E5%82%A8/index.html">
+<meta property="og:site_name" content="love70&#39;s Blog">
+<meta property="og:description" content="1. ConfigMap1.1 ConfigMap 介绍ConfigMap 功能在 Kubernetes 1.2版本中引入，许多应用程序会从配置文件、命令行参数或环境变量中读取配置信息。ConfigMap API 给我们提供了向容器中注入配置信息的机制，ConfigMap 可以被用来保存单个属性，也可以用来保存整个配置文件或者 JSON 二进制大对象。">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200321174040532.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200321173909408.png">
+<meta property="article:published_time" content="2020-03-06T12:41:00.000Z">
+<meta property="article:modified_time" content="2020-03-29T13:26:44.865Z">
+<meta property="article:author" content="Zheng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200321174040532.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="love70.github.io/2020/03/06/kubernetes笔记/6.Kubernetes存储/"/>
+
+
+
+
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0f81ff2f.js","daovoice")
+  daovoice('init', {
+      app_id: "9d540936"
+    });
+  daovoice('update');
+  </script>
+
+  <title>六、Kubernetes 存储 | love70's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?195e030fc879cff274bb0c66746d14d5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">love70's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Challenge is needed for success.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="love70.github.io/2020/03/06/kubernetes%E7%AC%94%E8%AE%B0/6.Kubernetes%E5%AD%98%E5%82%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zheng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/demo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="love70's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">六、Kubernetes 存储</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-06T20:41:00+08:00">
+                2020-03-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/03/06/kubernetes%E7%AC%94%E8%AE%B0/6.Kubernetes%E5%AD%98%E5%82%A8/" class="leancloud_visitors" data-flag-title="六、Kubernetes 存储">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  19
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="1-ConfigMap"><a href="#1-ConfigMap" class="headerlink" title="1. ConfigMap"></a>1. ConfigMap</h1><h2 id="1-1-ConfigMap-介绍"><a href="#1-1-ConfigMap-介绍" class="headerlink" title="1.1 ConfigMap 介绍"></a>1.1 ConfigMap 介绍</h2><p>ConfigMap 功能在 Kubernetes 1.2版本中引入，许多应用程序会从配置文件、命令行参数或环境变量中读取配置信息。<strong>ConfigMap API 给我们提供了向容器中注入配置信息的机制，ConfigMap 可以被用来保存单个属性，也可以用来保存整个配置文件或者 JSON 二进制大对象。</strong></p>
+<a id="more"></a>
+
+<p>70： ConfigMap 存储配置信息。</p>
+<p>70：生产环境中使用配置文件注册中心（目前还没有比较好的开源方案），服务向配置文件注册中心去索要它的配置信息，配置文件注册中心根据匹配信息（如：主机名、IP地址范围）分配配置文件。以后要修改配置文件，只需要在配置文件注册中心进行更新，这样就会触发每个服务的修改和运行。</p>
+<h2 id="1-2-ConfigMap-的创建"><a href="#1-2-ConfigMap-的创建" class="headerlink" title="1.2 ConfigMap 的创建"></a>1.2 ConfigMap 的创建</h2><p><strong>Ⅰ、使用目录创建</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ls docs/user-guide/configmap/kubectl/</span></span><br><span class="line">game.properties</span><br><span class="line">ui.properties</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat docs/user-guide/configmap/kubectl/game.properties</span></span><br><span class="line">enemies=aliens</span><br><span class="line">lives=3</span><br><span class="line">enemies.cheat=true</span><br><span class="line">enemies.cheat.level=noGoodRotten</span><br><span class="line">secret.code.passphrase=UUDDLRLRBABAS</span><br><span class="line">secret.code.allowed=true</span><br><span class="line">secret.code.lives=30</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat docs/user-guide/configmap/kubectl/ui.properties</span></span><br><span class="line">color.good=purple</span><br><span class="line">color.bad=yellow</span><br><span class="line">allow.textmode=true</span><br><span class="line">how.nice.to.look=fairlyNice</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建 ConfigMap</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create configmap game-config --from-file=xxx/configmap/</span></span><br></pre></td></tr></table></figure>
+
+<p><code>--from-file</code> 指定在目录下的所有文件都会被用在 ConfigMap 里面创建一个键值对，<strong>键的名字就是文件名，值就是文件的内容</strong>。</p>
+<p><strong>Ⅱ、使用文件创建</strong></p>
+<p>只要指定为一个文件就可以从单个文件中创建ConfigMap</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl create configmap game-config2 --from-file=./game.properties --from-file=./ui.properties</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看 ConfigMap 信息</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl get configmap game-config2 -o yaml</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl describe configmap game-config2</span></span><br></pre></td></tr></table></figure>
+
+<p><code>--from-file</code>  这个参数可以使用多次，你可以使用两次分别指定上个实例中的那两个配置文件，效果就跟指定整个目录是一样的。</p>
+<p><strong>Ⅲ、使用字面值创建</strong></p>
+<p>使用文字值创建，利用 <code>--from-literal</code> 参数传递配置信息，该参数可以使用多次，格式如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl create configmap special-config --from-literal=special.how=very --from-literal=special.type=charm</span></span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl get configmaps special-config -o yaml</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Ⅳ、通过资源清单创建</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">special.how:</span> <span class="string">very</span></span><br><span class="line">  <span class="attr">special.type:</span> <span class="string">charm</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-3-Pod-中使用-ConfigMap"><a href="#1-3-Pod-中使用-ConfigMap" class="headerlink" title="1.3 Pod 中使用 ConfigMap"></a>1.3 Pod 中使用 ConfigMap</h2><p><strong>Ⅰ、使用 ConfigMap 来替代环境变量</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">special.how:</span> <span class="string">very</span></span><br><span class="line">  <span class="attr">special.type:</span> <span class="string">charm</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">env-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">log_level:</span> <span class="string">INFO</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dapi-test-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">[</span> <span class="string">"/bin/sh"</span><span class="string">,</span> <span class="string">"-c"</span><span class="string">,</span> <span class="string">"env"</span> <span class="string">]</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPECIAL_LEVEL_KEY</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">configMapKeyRef:</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">special.how</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPECIAL_TYPE_KEY</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">configMapKeyRef:</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">special.type</span></span><br><span class="line">      <span class="attr">envFrom:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">configMapRef:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">env-config</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Ⅱ、用 ConfigMap 设置命令行参数</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">special.how:</span> <span class="string">very</span></span><br><span class="line">  <span class="attr">special.type:</span> <span class="string">charm</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dapi-test-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">[</span> <span class="string">"/bin/sh"</span><span class="string">,</span> <span class="string">"-c"</span><span class="string">,</span> <span class="string">"echo $(SPECIAL_LEVEL_KEY) $(SPECIAL_TYPE_KEY)"</span> <span class="string">]</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPECIAL_LEVEL_KEY</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">configMapKeyRef:</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">special.how</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">SPECIAL_TYPE_KEY</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">configMapKeyRef:</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">special.type</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Ⅲ、通过数据卷插件使用 ConfigMap</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">special.how:</span> <span class="string">very</span></span><br><span class="line">  <span class="attr">special.type:</span> <span class="string">charm</span></span><br></pre></td></tr></table></figure>
+
+<p>在数据卷里面使用这个 ConfigMap，有不同的选项。<strong>最基本的就是将文件填入数据卷，在这个文件中，键就是文件名，键值就是文件内容。</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dapi-test-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">[</span> <span class="string">"/bin/sh"</span><span class="string">,</span> <span class="string">"-c"</span><span class="string">,</span> <span class="string">"cat /etc/config/special.how"</span> <span class="string">]</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">          <span class="attr">mountPath:</span> <span class="string">/etc/config</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">      <span class="attr">configMap:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">special-config</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Never</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-4-ConfigMap-的热更新"><a href="#1-4-ConfigMap-的热更新" class="headerlink" title="1.4 ConfigMap 的热更新"></a>1.4 ConfigMap 的热更新</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">log-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">log_level:</span> <span class="string">INFO</span></span><br><span class="line">  </span><br><span class="line"><span class="meta">---</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">my-nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">my-nginx</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/etc/config</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-volume</span></span><br><span class="line">          <span class="attr">configMap:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">log-config</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl <span class="built_in">exec</span> `kubectl get pods -l run=my-nginx -o=name|cut -d <span class="string">"/"</span> -f2` cat</span></span><br><span class="line">/etc/config/log_level</span><br><span class="line">INFO</span><br></pre></td></tr></table></figure>
+
+<p><strong>修改 ConfigMap</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl edit configmap <span class="built_in">log</span>-config</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>修改 log_level 的值为 DEBUG ，等待大概 10秒钟时间，再次查看环境变量的值</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl <span class="built_in">exec</span> `kubectl get pods -l run=my-nginx -o=name|cut -d <span class="string">"/"</span> -f2` cat /tmp/log_level</span></span><br><span class="line">DEBUG</span><br></pre></td></tr></table></figure>
+
+<p><strong>ConfigMap 更新后滚动更新 Pod</strong></p>
+<p><strong>注意：更新 ConfigMap 目前并不会触发相关 Pod 的滚动更新，可以通过修改 pod annotations 的方式强制触发滚动更新。</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl patch deployment my-nginx --patch <span class="string">'&#123;"spec": &#123;"template": &#123;"metadata": &#123;"annotations": &#123;"version/config": "20190411" &#125;&#125;&#125;&#125;&#125;'</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这个例子里我们在 .spec.template.metadata.annotations 中添加 version/config ，每次通过修改version/config 来触发滚动更新。</p>
+<p><strong>更新 ConfigMap后：</strong></p>
+<ul>
+<li><strong>使用该 ConfigMap 挂载的 Env 不会同步更新</strong></li>
+<li><strong>使用该 ConfigMap 挂载的 Volume 中的数据需要一段时间（实测大概10秒）才能同步更新</strong></li>
+</ul>
+<h1 id="2-Secret"><a href="#2-Secret" class="headerlink" title="2. Secret"></a>2. Secret</h1><h2 id="2-1-Secret-介绍"><a href="#2-1-Secret-介绍" class="headerlink" title="2.1 Secret 介绍"></a>2.1 Secret 介绍</h2><p><strong>Secrect 解决了密码、token、密钥等敏感数据的配置问题</strong>，而不需要把这些敏感数据暴露到镜像或者 Pod Spec 中。Secret 可以以 Volume 或者环境变量的方式使用。</p>
+<p>70：Secret 存储敏感数据。</p>
+<p><strong>Secret 有三种类型：</strong></p>
+<ul>
+<li><strong>Service Account：用来访问 Kubernetes API，由 Kubernetes 自动创建，并且会自动挂载到 Pod 的 /run/secret/kubernetes.io/serviceaccount 目录中。</strong></li>
+<li><strong>Opaque：base64 编码格式的 Secret，用来存储密码、密钥等。</strong></li>
+<li><strong>kubernets.io/dockerconfigjson：用来存储私有 docker registry 的认知信息。</strong></li>
+</ul>
+<h2 id="2-2-Service-Account"><a href="#2-2-Service-Account" class="headerlink" title="2.2 Service Account"></a>2.2 Service Account</h2><p>Service Account 用来访问 Kubernetes API，由 Kubernetes 自动创建，并且会自动挂载到 Pod的<br>/run/secrets/kubernetes.io/serviceaccount 目录中。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl <span class="built_in">exec</span> kube-proxy-ffq2n -n kube-system -it /bin/sh</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls /run/secrets/kubernetes.io/serviceaccount</span></span><br><span class="line">ca.crt	namespace  token</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-3-Opaque-Secret"><a href="#2-3-Opaque-Secret" class="headerlink" title="2.3 Opaque Secret"></a>2.3 Opaque Secret</h2><p><strong>Ⅰ、创建说明</strong></p>
+<p><strong>Opaque 类型的数据是一个 map 类型，要求 value 是 base64 编码格式：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> -n <span class="string">"admin"</span> | base64</span></span><br><span class="line">YWRtaW4=</span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> -n <span class="string">"1f2d1e2e67df"</span> | base64</span></span><br><span class="line">MWYyZDFlMmU2N2Rm</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Secret</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mysecret</span></span><br><span class="line"><span class="attr">type:</span> <span class="string">Opaque</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">password:</span> <span class="string">MWYyZDFlMmU2N2Rm</span></span><br><span class="line">  <span class="attr">username:</span> <span class="string">YWRtaW4=</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Ⅱ、使用方式</strong><br><strong>1、将 Secret 挂载到 Volume 中</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">secret-test</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">secret-test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">secrets</span></span><br><span class="line">      <span class="attr">secret:</span></span><br><span class="line">        <span class="attr">secretName:</span> <span class="string">mysecret</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">db</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">secrets</span></span><br><span class="line">          <span class="attr">mountPath:</span> <span class="string">"/etc/secrets"</span></span><br><span class="line">          <span class="attr">readOnly:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl <span class="built_in">exec</span> seret-test -it /bin/sh</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> /etc/secrets</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ls </span></span><br><span class="line">password  username</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat password</span></span><br><span class="line">1f2d1e2e67df</span><br><span class="line"><span class="meta">$</span><span class="bash"> cat username</span></span><br><span class="line">admin</span><br></pre></td></tr></table></figure>
+
+<p><strong>在创建的时候使用 base64 加密保存，在使用时会自己进行解密。</strong></p>
+<p><strong>2、将 Secret 导出到环境变量中</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">pod-deployment</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">pod-1</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">wangyanglinux/myapp:v1</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TEST_USER</span></span><br><span class="line">              <span class="attr">valueFrom:</span></span><br><span class="line">                <span class="attr">secretKeyRef:</span></span><br><span class="line">                  <span class="attr">name:</span> <span class="string">mysecret</span></span><br><span class="line">                  <span class="attr">key:</span> <span class="string">username</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TEST_PASSWORD</span></span><br><span class="line">              <span class="attr">valueFrom:</span></span><br><span class="line">                <span class="attr">secretKeyRef:</span></span><br><span class="line">                  <span class="attr">name:</span> <span class="string">mysecret</span></span><br><span class="line">                  <span class="attr">key:</span> <span class="string">password</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-4-kubernetes-io-dockerconfigjson"><a href="#2-4-kubernetes-io-dockerconfigjson" class="headerlink" title="2.4 kubernetes.io/dockerconfigjson"></a>2.4 kubernetes.io/dockerconfigjson</h2><p>使用 kubectl 创建 docker registry 认证的 secret</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> kubectl create secret docker-registry myregistrykey \</span></span><br><span class="line">--docker-server=DOCKER_REGISTRY_SERVER --docker-username=DOCKER_USER \</span><br><span class="line">--docker-password=DOCKER_PASSWORD --docker-email=DOCKER_EMAIL</span><br><span class="line">secret "myregistrykey" created.</span><br></pre></td></tr></table></figure>
+
+<p>在创建 Pod 的时候，通过 <strong>imagePullSecret</strong> 来引用刚创建的 myregistry</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">hub.atguigu.com/private/myapp:v1</span></span><br><span class="line">      <span class="attr">imagePullSecrets:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myregistrykey</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="3-Volume"><a href="#3-Volume" class="headerlink" title="3. Volume"></a>3. Volume</h1><h2 id="3-1-Volume-介绍"><a href="#3-1-Volume-介绍" class="headerlink" title="3.1 Volume 介绍"></a>3.1 Volume 介绍</h2><p>容器磁盘上的文件的生命周期是短暂的，这就使得在容器中运行重要应用时会出现一些问题：</p>
+<ul>
+<li>首先，当容器崩溃时，kubelet 会重启它，但是容器中的文件将丢失——容器以干净的状态（镜像最初的状态）重新启动。（70：这里和docker还是有所区别，docker中如果启动命令中加上restart: always，当容器内部进程关闭后，docker会负责重新引导启动进程，但不是以干净状态启动，而是保留里面的数据）</li>
+<li>其次，在 Pod 中同时运行多个容器时，这些容器之间通常需要共享文件。Kubernetes 中的 Volume 抽象就很好的解决了这些问题。</li>
+</ul>
+<p><strong>Kubernetes 中的卷有明确的寿命——与封装它的 Pod 相同。所以，卷的生命比 Pod 中的所有的容器都长，当这个容器重启时数据仍然得以保存。当然，当 Pod 不再存在时，卷也将不复存在。也许更重要的是，Kubernetes 支持多种类型的卷，Pod 可以同时使用任意数量的卷。</strong></p>
+<p>70：原理：pause 挂载绑定 Volume，而 Pod 所有容器共享 pause 的网络栈和存储卷。</p>
+<p><strong>Kubernetes 支持以下类型的卷：</strong></p>
+<p><code>awsElasticBlockStore</code> <code>azureDisk</code> <code>azureFile</code> <code>cephfs</code> <code>csi</code> <code>downwardAPI</code> <code>emptyDir</code><br><code>fc</code> <code>flocker</code> <code>gcePersistentDisk</code> <code>gitRepo</code> <code>glusterfs</code> <code>hostPath</code> <code>iscsi</code> <code>local</code> <code>nfs</code><br><code>persistentVolumeClaim</code> <code>projected</code> <code>portworxVolume</code> <code>quobyte</code> <code>rbd</code> <code>scaleIO</code> <code>secret</code><br><code>storageos</code> <code>vsphereVolume</code></p>
+<h2 id="3-2-emptyDir"><a href="#3-2-emptyDir" class="headerlink" title="3.2 emptyDir"></a>3.2 emptyDir</h2><p><strong>当 Pod 被分配给节点时，首先创建 emptyDir 卷，并且只要该 Pod 在该节点上运行，该卷就会存在。正如卷的名字所述，它最初是空的。Pod 中的容器可以读取和写入 emptyDir 卷中的相同文件，尽管该卷可以挂载到每个容器中的相同或不同路径上。当出于任何原因从节点中删除 Pod 时， emptyDir 中的数据将被永久删除。</strong></p>
+<p><strong>注意：容器崩溃不会从节点中移除 Pod，因此 emptyDir 卷中的数据在容器崩溃时是安全的。</strong></p>
+<p><strong>emptyDir 的用法有：</strong></p>
+<ul>
+<li><strong>暂存空间，例如用于基于磁盘的合并排序</strong></li>
+<li><strong>用作长时间计算崩溃恢复时的检查点</strong></li>
+<li><strong>Web服务器容器提供数据时，保存内容管理器容器提取的文件</strong></li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-pd</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">k8s.gcr.io/test-webserver</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/cache</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">cache-volume</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cache-volume</span></span><br><span class="line">      <span class="attr">emptyDir:</span> <span class="string">&#123;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-3-hostPath"><a href="#3-3-hostPath" class="headerlink" title="3.3 hostPath"></a>3.3 hostPath</h2><p><strong>hostPath 卷将主机节点的文件系统中的文件或目录挂载到集群中。</strong></p>
+<p><strong>hostPath 的用途如下：</strong></p>
+<ul>
+<li><p><strong>运行需要访问 Docker 内部的容器；使用 /var/lib/docker 的 hostPath</strong></p>
+</li>
+<li><p><strong>在容器中运行 cAdvisor；使用 /dev/cgroups 的 hostPath</strong></p>
+</li>
+<li><p><strong>允许 pod 指定给定的 hostPath 是否应该在 pod 运行之前存在，是否应该创建，以及它应该以什么形式存在</strong></p>
+</li>
+</ul>
+<p>除了所需的 path 属性之外，用户还可以为 hostPath 卷指定 <strong>type</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>空字符串（默认）用于向后兼容，这意味着在挂载 hostPath 卷之前不会执行任何检查。</td>
+</tr>
+<tr>
+<td>DirectoryOrCreate</td>
+<td>如果在给定的路径上没有任何东西存在，那么将根据需要在那里创建一个空目录，权限设置为 0755，与 Kubelet 具有相同的组和所有权。</td>
+</tr>
+<tr>
+<td>Directory</td>
+<td>给定的路径下必须存在目录</td>
+</tr>
+<tr>
+<td>FileOrCreate</td>
+<td>如果在给定的路径上没有任何东西存在，那么会根据需要创建一个空文件，权限设置为 0644，与 Kubelet 具有相同的组和所有权。</td>
+</tr>
+<tr>
+<td>File</td>
+<td>给定的路径下必须存在文件</td>
+</tr>
+<tr>
+<td>Socket</td>
+<td>给定的路径下必须存在 UNIX 套接字</td>
+</tr>
+<tr>
+<td>CharDevice</td>
+<td>给定的路径下必须存在字符设备</td>
+</tr>
+<tr>
+<td>BlockDevice</td>
+<td>给定的路径下必须存在块设备</td>
+</tr>
+</tbody></table>
+<p><strong>使用这种卷类型是请注意：</strong></p>
+<ul>
+<li><strong>由于每个节点上的文件都不同，具有相同配置（例如从 podTemplate 创建的）的 pod 在不同节点上的行为可能会有所不同。</strong>（70：一个Node上有mfs目录，而另一个Node上没有）</li>
+<li><strong>当 Kubernetes 按照计划添加资源感知调度时，将无法考虑 hostPath 使用的资源。</strong></li>
+<li><strong>在底层主机上创建的文件或目录只能由 root 写入。您需要在特权容器中以 root 身份运行进程，或修改主机上的文件权限以便写入 hostPath 卷。</strong></li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-pd</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">k8s.gcr.io/test-webserver</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/test-pd</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">test-volume</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-volume</span></span><br><span class="line">      <span class="attr">hostPath:</span></span><br><span class="line">        <span class="comment"># directory location on host</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/data</span></span><br><span class="line">        <span class="comment"># this field is optional</span></span><br><span class="line">        <span class="attr">type:</span> <span class="string">Directory</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="4-Persistent-Volume"><a href="#4-Persistent-Volume" class="headerlink" title="4. Persistent Volume"></a>4. Persistent Volume</h1><h2 id="4-1-PersistentVolume-介绍"><a href="#4-1-PersistentVolume-介绍" class="headerlink" title="4.1 PersistentVolume 介绍"></a>4.1 PersistentVolume 介绍</h2><p><strong>PersistentVolume（PV）</strong>是由管理员设置的存储，它是集群的一部分。就像节点是集群中的资源一样，PV 也是集群中的资源。 PV 是 Volume 之类的卷插件，但具有<strong>独立于使用 PV 的 Pod 的生命周期</strong>。此 API 对象包含存储实现的细节，即 NFS、iSCSI 或特定于云供应商的存储系统。</p>
+<p>70：K8S 外部可能有存储工程师创建的不同存储资源，如nfs、mfs、iscsi等。k8s中提供了一种新的对象资源 PV，先在K8S集群中创建出 PV，不同的 PV 对应不同的存储资源。这样应用程序工程师在部署 Pod 时直接调用集群内部的 PV 即可完成存储的使用，不用去管后端的实现。</p>
+<p><strong>PersistentVolumeClaim（PVC）</strong>是用户存储的请求。它与 Pod 相似。Pod 消耗节点资源，PVC 消耗 PV 资源。Pod 可以请求特定级别的资源（CPU 和内存）。<strong>PVC 可以请求特定的大小和访问模式</strong>（例如，可以以读/写一次或只读多次模式挂载）。</p>
+<p>70：不同的 PV 具有不同的速度、大小，所以在使用时还需要判断该 PV 是否满足需求。如果有上万个 PV，在使用时需要一个一个去匹配，很费时。所以在创建 Pod 时可以给它附带一个 PVC 请求，PVC 请求即根据需求去寻找一个合适的 PV 进行绑定。PVC 会选择满足需求但资源量更 小的 PV。</p>
+<p><strong>静态 PV</strong> 是集群管理员创建一些 PV。它们带有可供集群用户使用的实际存储的细节。它们存在于 Kubernetes API 中，可用于消费。</p>
+<p><strong>动态 PV</strong> ：当管理员创建的静态 PV 都不匹配用户的 PersistentVolumeClaim 时，集群可能会尝试动态地为 PVC 创建卷。此配置基于 StorageClasses ：PVC 必须请求 [存储类]，并且管理员必须创建并配置该类才能进行动态创建。声明该类为 “” 可以有效地禁用其动态配置。要启用基于存储级别的动态存储配置，集群管理员需要启用 API server 上的 DefaultStorageClass [准入控制器]。例如，通过确保 DefaultStorageClass 位于 API server 组件的 –admission-control 标志，使用逗号分隔的有序值列表中，可以完成此操作。</p>
+<p><strong>绑定</strong>：master 中的控制环路监视新的 PVC，寻找匹配的 PV（如果可能），并将它们绑定在一起。如果为新的 PVC 动态调配 PV，则该环路将始终将该 PV 绑定到 PVC。否则，<strong>用户总会得到他们所请求的存储，但是容量可能超出要求的数量</strong>。一旦 PV 和 PVC 绑定后， PersistentVolumeClaim 绑定是<strong>排他性的</strong>，不管它们是如何绑定的。 <strong>PVC 跟 PV 绑定是一对一的映射</strong>。</p>
+<h2 id="4-2-持久化卷声明的保护"><a href="#4-2-持久化卷声明的保护" class="headerlink" title="4.2 持久化卷声明的保护"></a>4.2 持久化卷声明的保护</h2><p><strong>PVC 保护</strong>的目的是<strong>确保由 pod 正在使用的 PVC 不会从系统中移除</strong>，因为如果被移除的话可能会导致数据丢失。<strong>当启用PVC 保护 alpha 功能时，如果用户删除了一个 pod 正在使用的 PVC，则该 PVC 不会被立即删除。PVC 的删除将被推迟，直到 PVC 不再被任何 pod 使用。</strong></p>
+<h2 id="4-3-持久化卷类型"><a href="#4-3-持久化卷类型" class="headerlink" title="4.3 持久化卷类型"></a>4.3 持久化卷类型</h2><p>PersistentVolume 类型以插件形式实现。Kubernetes 目前支持以下插件类型：</p>
+<p><code>GCEPersistentDisk</code> <code>AWSElasticBlockStore</code> <code>AzureFile</code> <code>AzureDisk</code> <code>FC (Fibre Channel)</code><br><code>FlexVolume</code> <code>Flocker</code> <code>NFS</code> <code>iSCSI</code> <code>RBD (Ceph Block Device)</code> <code>CephFS</code><br><code>Cinder (OpenStack block storage)</code> <code>Glusterfs</code> <code>VsphereVolume</code> <code>Quobyte</code> <code>Volumes</code><br><code>HostPath</code> <code>VMware</code> <code>Photon</code> <code>Portworx</code> <code>Volumes</code> <code>ScaleIO</code> <code>Volumes</code> <code>StorageOS</code></p>
+<p>持久卷演示代码：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pv0003</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">5Gi</span></span><br><span class="line">  <span class="attr">volumeMode:</span> <span class="string">Filesystem</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">slow</span></span><br><span class="line">  <span class="attr">mountOptions:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">hard</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">nfsvers=4.1</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/tmp</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">172.17</span><span class="number">.0</span><span class="number">.2</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="4-4-PV-访问模式"><a href="#4-4-PV-访问模式" class="headerlink" title="4.4 PV 访问模式"></a>4.4 PV 访问模式</h2><p>PersistentVolume 可以以资源提供者支持的任何方式挂载到主机上。如下表所示，供应商具有不同的功能，每个 PV 的访问模式都将被设置为该卷支持的特定模式。例如，NFS 可以支持多个读/写客户端，但特定的 NFS PV 可能以只读方式导出到服务器上。每个 PV 都有一套自己的用来描述特定功能的访问模式。</p>
+<ul>
+<li><strong>ReadWriteOnce——该卷可以被单个节点以读/写模式挂载</strong></li>
+<li><strong>ReadOnlyMany——该卷可以被多个节点以只读模式挂载</strong></li>
+<li><strong>ReadWriteMany——该卷可以被多个节点以读/写模式挂载</strong></li>
+</ul>
+<p>在命令行中，访问模式缩写为：</p>
+<ul>
+<li><strong>RWO - ReadWriteOnce</strong></li>
+<li><strong>ROX - ReadOnlyMany</strong></li>
+<li><strong>RWX - ReadWriteMany</strong></li>
+</ul>
+<p><strong>注意：一个卷一次只能使用一种访问模式挂载，即使它支持很多访问模式。例如：GCEPersistentDisk 可以由单个节点作为 ReadWriteOnce 模式挂载，或由多个节点以  ReadOnlyMany 模式挂载，但不能同时挂载</strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">Volume 插件</th>
+<th align="center">ReadWriteOnce</th>
+<th align="center">ReadOnlyMany</th>
+<th align="center">ReadWriteMany</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">AWSElasticBlockStoreAWSElasticBlockStore</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">AzureFile</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+</tr>
+<tr>
+<td align="center">AzureDisk</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">CephFS</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+</tr>
+<tr>
+<td align="center">Cinder</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">FC</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">FlexVolume</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">Flocker</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">GCEPersistentDisk</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">Glusterfs</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+</tr>
+<tr>
+<td align="center">HostPath</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">iSCSI</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">PhotonPersistentDisk</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">Quobyte</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+</tr>
+<tr>
+<td align="center">NFS</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+</tr>
+<tr>
+<td align="center">RBD</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">VsphereVolume</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+<td align="center">-（当 pod 并列时有效）</td>
+</tr>
+<tr>
+<td align="center">PortworxVolume</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+<td align="center">✓</td>
+</tr>
+<tr>
+<td align="center">ScaleIO</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+</tr>
+<tr>
+<td align="center">StorageOS</td>
+<td align="center">✓</td>
+<td align="center">-</td>
+<td align="center">-</td>
+</tr>
+</tbody></table>
+<h2 id="4-5-回收策略"><a href="#4-5-回收策略" class="headerlink" title="4.5 回收策略"></a>4.5 回收策略</h2><ul>
+<li><strong>Retain（保留）—— 手动回收（kubectl edit 进去手动删除）</strong></li>
+<li><strong>Recycle（回收）—— 基本擦除（ rm -rf /thevolume/* ）</strong></li>
+<li><strong>Delete（删除）—— 关联的存储资产（例如 AWS EBS、GCE PD、Azure Disk 和 OpenStack Cinder 卷）将被删除</strong></li>
+</ul>
+<p>当前，只有 NFS 和 HostPath 支持回收策略。AWS EBS、GCE PD、Azure Disk 和 Cinder 卷支持删除策略。</p>
+<p>70：目前 NFS 好像不支持 Recycle 了，以最新文档为准。</p>
+<h2 id="4-6-状态"><a href="#4-6-状态" class="headerlink" title="4.6 状态"></a>4.6 状态</h2><p>卷可以处于以下的某种状态：</p>
+<ul>
+<li><strong>Available（可用）—— 一块空闲资源还没有被任何声明绑定</strong></li>
+<li><strong>Bound（已绑定）—— 卷已经被声明绑定</strong></li>
+<li><strong>Released（已释放）—— 声明被删除，但是资源还未被集群重新声明</strong></li>
+<li><strong>Failed（失败）—— 该卷的自动回收失败</strong></li>
+</ul>
+<p><strong>命令行会显示绑定到 PV 的 PVC 的名称</strong></p>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200321174040532.png" alt="image-20200321173909408" style="zoom:50%;" />
+
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200321173909408.png" alt="image-20200321174040532" style="zoom:50%;" />
+
+<h2 id="4-7-持久化演示说明-NFS"><a href="#4-7-持久化演示说明-NFS" class="headerlink" title="4.7 持久化演示说明 - NFS"></a>4.7 持久化演示说明 - NFS</h2><p><strong>Ⅰ、安装 NFS 服务器</strong></p>
+<p>NFS 服务器端：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum install -y nfs-common nfs-utils rpcbind</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mkdir /nfs</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> chmod 666 /nfs</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> chown nfsnobody /nfs</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat /etc/exports</span></span><br><span class="line">/nfs *(rw,no_root_squash,no_all_squash,sync)</span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl start rpcbind</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> systemctl start nfs</span></span><br></pre></td></tr></table></figure>
+
+<p>客户端（所有K8S节点）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum install -y nfs-utils rpcbind</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Ⅱ、部署 PV</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nfspv1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">1Gi</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Retain</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">nfs</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/nfs</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">10.66</span><span class="number">.66</span><span class="number">.10</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Ⅲ、创建服务并使用 PVC</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">clusterIP:</span> <span class="string">None</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      </span><br><span class="line"><span class="meta">---</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StatefulSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">serviceName:</span> <span class="string">"nginx"</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">k8s.gcr.io/nginx-slim:0.8</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">web</span></span><br><span class="line">              <span class="attr">containerPort:</span> <span class="number">80</span>              </span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">www</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/usr/share/nginx/html</span></span><br><span class="line">    <span class="attr">volumeClaimTemplates:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">metadata:</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">www</span></span><br><span class="line">          <span class="attr">spec:</span></span><br><span class="line">            <span class="attr">accessModes:</span> <span class="string">[</span> <span class="string">"ReadWriteOnce"</span> <span class="string">]</span></span><br><span class="line">            <span class="attr">storageClassName:</span> <span class="string">"nfs"</span></span><br><span class="line">            <span class="attr">resources:</span></span><br><span class="line">              <span class="attr">requests:</span></span><br><span class="line">                <span class="attr">storage:</span> <span class="string">1Gi</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="4-8-关于-StatefulSet"><a href="#4-8-关于-StatefulSet" class="headerlink" title="4.8 关于 StatefulSet"></a>4.8 关于 StatefulSet</h2><ul>
+<li><strong>匹配 Pod name ( 网络标识 ) 的模式为：$(statefulset名称)-$(序号)，比如上面的示例：web-0，web-1，</strong><br>  <strong>web-2。</strong></li>
+<li><strong>StatefulSet 为每个 Pod 副本创建了一个 DNS 域名，这个域名的格式为： $(podname).(headless server name)，也就意味着服务间是通过Pod域名来通信而非 Pod IP，因为当Pod所在Node发生故障时， Pod 会被飘移到其它 Node 上，Pod IP 会发生变化，但是 Pod 域名不会有变化。</strong></li>
+<li><strong>StatefulSet 使用 Headless 服务来控制 Pod 的域名，这个域名的 FQDN 为：$(service</strong><br>  <strong>name).$(namespace).svc.cluster.local，其中，“cluster.local” 指的是集群的域名。</strong></li>
+<li><strong>根据 volumeClaimTemplates，为每个 Pod 创建一个 pvc，pvc 的命名规则匹配模式：</strong><br>  <strong>(volumeClaimTemplates.name)-(pod_name)，比如上面的 volumeMounts.name=www， Pod</strong><br>  <strong>name=web-[0-2]，因此创建出来的 PVC 是 www-web-0、www-web-1、www-web-2。</strong></li>
+<li><strong>删除 Pod 不会删除其 pvc，手动删除 pvc 将自动释放 pv。</strong></li>
+</ul>
+<p>StatefulSet 的启停顺序：</p>
+<ul>
+<li><strong>有序部署：部署StatefulSet时，如果有多个Pod副本，它们会被顺序地创建（从0到N-1）并且，在下一个</strong><br>  <strong>Pod运行之前所有之前的Pod必须都是Running和Ready状态。</strong></li>
+<li><strong>有序删除：当Pod被删除时，它们被终止的顺序是从N-1到0。</strong></li>
+<li><strong>有序扩展：当对Pod执行扩展操作时，与部署一样，它前面的Pod必须都处于Running和Ready状态。</strong></li>
+</ul>
+<p>StatefulSet 使用场景：</p>
+<ul>
+<li><strong>稳定的持久化存储，即Pod重新调度后还是能访问到相同的持久化数据，基于 PVC 来实现。</strong></li>
+<li><strong>稳定的网络标识符，即 Pod 重新调度后其 PodName 和 HostName 不变。</strong></li>
+<li><strong>有序部署，有序扩展，基于 init containers 来实现。</strong></li>
+<li><strong>有序收缩。</strong></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/微信收款码.jpg" alt="Zheng 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/支付宝收款码.jpg" alt="Zheng 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/05/kubernetes%E7%AC%94%E8%AE%B0/5.Kubernete%E6%9C%8D%E5%8A%A1/" rel="next" title="五、Kubernetes 服务">
+                <i class="fa fa-chevron-left"></i> 五、Kubernetes 服务
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/07/kubernetes%E7%AC%94%E8%AE%B0/7.Kubernetes%E9%9B%86%E7%BE%A4%E8%B0%83%E5%BA%A6/" rel="prev" title="七、Kubernets 集群调度">
+                七、Kubernets 集群调度 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+  <script>
+    window._bd_share_config = {
+      "common": {
+        "bdText": "",
+        "bdMini": "1",
+        "bdMiniList": false,
+        "bdPic": ""
+      },
+      "image": {
+        "viewList": ["tsina", "douban", "sqq", "qzone", "weixin", "twi", "fbook"],
+        "viewText": "分享到：",
+        "viewSize": "16"
+      },
+      "slide": {
+        "bdImg": "5",
+        "bdPos": "left",
+        "bdTop": "100"
+      }
+    }
+  </script>
+
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDE0OC8xMDY4NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/demo.jpg"
+                alt="Zheng" />
+            
+              <p class="site-author-name" itemprop="name">Zheng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/love70" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-ConfigMap"><span class="nav-number">1.</span> <span class="nav-text">1. ConfigMap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-ConfigMap-介绍"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 ConfigMap 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-ConfigMap-的创建"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 ConfigMap 的创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-Pod-中使用-ConfigMap"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Pod 中使用 ConfigMap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-ConfigMap-的热更新"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 ConfigMap 的热更新</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-Secret"><span class="nav-number">2.</span> <span class="nav-text">2. Secret</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Secret-介绍"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Secret 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-Service-Account"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Service Account</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-Opaque-Secret"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Opaque Secret</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-kubernetes-io-dockerconfigjson"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 kubernetes.io&#x2F;dockerconfigjson</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-Volume"><span class="nav-number">3.</span> <span class="nav-text">3. Volume</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-Volume-介绍"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Volume 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-emptyDir"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 emptyDir</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-hostPath"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 hostPath</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-Persistent-Volume"><span class="nav-number">4.</span> <span class="nav-text">4. Persistent Volume</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-PersistentVolume-介绍"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 PersistentVolume 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-持久化卷声明的保护"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 持久化卷声明的保护</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-持久化卷类型"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 持久化卷类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-PV-访问模式"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 PV 访问模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-5-回收策略"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 回收策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-6-状态"><span class="nav-number">4.6.</span> <span class="nav-text">4.6 状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-7-持久化演示说明-NFS"><span class="nav-number">4.7.</span> <span class="nav-text">4.7 持久化演示说明 - NFS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-8-关于-StatefulSet"><span class="nav-number">4.8.</span> <span class="nav-text">4.8 关于 StatefulSet</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zheng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/canvas_lines.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("nB3bSL0ilFthw62j0k6C5CXR-gzGzoHsz", "YhNf2pmy8UbaPT8sUhKasOGI");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

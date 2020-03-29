@@ -14,8 +14,8 @@
 
 <script>
     (function(){
-        if('password'){
-            if (prompt('请输入文章密码') !== 'password'){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
                 alert('密码错误！');
                 history.back();
             }
@@ -96,24 +96,18 @@
 
 
 
-<meta name="description" content="基于GithubPages和Hexo搭建博客Github Pages是什么？Github Pages本用于介绍托管在Github上的项目，不过由于它的空间免费稳定，所以用来搭建一个博客再好不过了。">
+<meta name="description" content="写在前面通过上一篇博客，我们大概知道docker是怎么玩的了。下面我们进一步来对docker进行解析。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="搭建我的第一个博客">
-<meta property="og:url" content="love70.github.io/2017/10/15/%E6%90%AD%E5%BB%BA%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2/index.html">
+<meta property="og:title" content="Docker解析">
+<meta property="og:url" content="love70.github.io/2018/02/19/Docker%E7%AC%94%E8%AE%B0/Docker%E8%A7%A3%E6%9E%90/index.html">
 <meta property="og:site_name" content="love70&#39;s Blog">
-<meta property="og:description" content="基于GithubPages和Hexo搭建博客Github Pages是什么？Github Pages本用于介绍托管在Github上的项目，不过由于它的空间免费稳定，所以用来搭建一个博客再好不过了。">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%931.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%932.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%9333.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%934.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%935.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/hexo-s.png">
-<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/hexo-first.png">
-<meta property="article:published_time" content="2017-10-15T12:41:00.000Z">
-<meta property="article:modified_time" content="2020-03-29T11:33:36.439Z">
+<meta property="og:description" content="写在前面通过上一篇博客，我们大概知道docker是怎么玩的了。下面我们进一步来对docker进行解析。">
+<meta property="og:image" content="http://oxtgpqjno.bkt.clouddn.com/ba6d92b3ee037c9ed576f47ae5edf091.jpg">
+<meta property="article:published_time" content="2018-02-19T07:13:25.000Z">
+<meta property="article:modified_time" content="2018-02-19T07:19:22.948Z">
 <meta property="article:author" content="Zheng">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%931.png">
+<meta name="twitter:image" content="http://oxtgpqjno.bkt.clouddn.com/ba6d92b3ee037c9ed576f47ae5edf091.jpg">
 
 
 
@@ -143,7 +137,7 @@
 
 
 
-  <link rel="canonical" href="love70.github.io/2017/10/15/搭建我的第一个博客/"/>
+  <link rel="canonical" href="love70.github.io/2018/02/19/Docker笔记/Docker解析/"/>
 
 
 
@@ -158,7 +152,7 @@
   daovoice('update');
   </script>
 
-  <title>搭建我的第一个博客 | love70's Blog</title>
+  <title>Docker解析 | love70's Blog</title>
   
 
 
@@ -224,7 +218,7 @@
       
         
         <li class="menu-item menu-item-home">
-          <a href="/%20" rel="section">
+          <a href="/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
@@ -234,7 +228,7 @@
       
         
         <li class="menu-item menu-item-categories">
-          <a href="/categories/%20" rel="section">
+          <a href="/categories/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
@@ -244,7 +238,7 @@
       
         
         <li class="menu-item menu-item-archives">
-          <a href="/archives/%20" rel="section">
+          <a href="/archives/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
@@ -254,7 +248,7 @@
       
         
         <li class="menu-item menu-item-about">
-          <a href="/about/%20" rel="section">
+          <a href="/about/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
@@ -329,7 +323,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="love70.github.io/2017/10/15/%E6%90%AD%E5%BB%BA%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2/">
+    <link itemprop="mainEntityOfPage" href="love70.github.io/2018/02/19/Docker%E7%AC%94%E8%AE%B0/Docker%E8%A7%A3%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Zheng">
@@ -346,7 +340,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">搭建我的第一个博客</h2>
+          <h2 class="post-title" itemprop="name headline">Docker解析</h2>
         
 
         <div class="post-meta">
@@ -358,8 +352,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-15T20:41:00+08:00">
-                2017-10-15
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-19T15:13:25+08:00">
+                2018-02-19
               </time>
             
 
@@ -381,8 +375,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
+                  <a href="/categories/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
                   </a>
                 </span>
 
@@ -398,7 +392,7 @@
 
           
           
-             <span id="/2017/10/15/%E6%90%AD%E5%BB%BA%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2/" class="leancloud_visitors" data-flag-title="搭建我的第一个博客">
+             <span id="/2018/02/19/Docker%E7%AC%94%E8%AE%B0/Docker%E8%A7%A3%E6%9E%90/" class="leancloud_visitors" data-flag-title="Docker解析">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -423,7 +417,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1.9k
+                  872
                 </span>
               
 
@@ -439,7 +433,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  7
+                  3
                 </span>
               
             </div>
@@ -461,99 +455,20 @@
 
       
         <hr>
-<h1 id="基于GithubPages和Hexo搭建博客"><a href="#基于GithubPages和Hexo搭建博客" class="headerlink" title="基于GithubPages和Hexo搭建博客"></a>基于GithubPages和Hexo搭建博客</h1><h2 id="Github-Pages是什么？"><a href="#Github-Pages是什么？" class="headerlink" title="Github Pages是什么？"></a>Github Pages是什么？</h2><p>Github Pages本用于介绍托管在Github上的项目，不过由于它的空间免费稳定，所以用来搭建一个博客再好不过了。</p>
+<h1 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h1><p>通过上一篇博客，我们大概知道docker是怎么玩的了。下面我们进一步来对docker进行解析。</p>
 <a id="more"></a>
 
-<h2 id="为什么-选择GIthub-Pages"><a href="#为什么-选择GIthub-Pages" class="headerlink" title="为什么 选择GIthub Pages?"></a>为什么 选择GIthub Pages?</h2><ul>
-<li>GitHub Pages有300M免费空间，搭建的博客可以很方便的进行管理，并且保存可靠；</li>
-<li>GitHub 是趋势，GitHub上面有很多大牛，学IT的人应该尽早融入这样的环境 ;</li>
-<li>程序员应该学会使用Git来管理项目，熟悉版本控制 ;</li>
-<li>Github上有很多的开源项目，多学习学习，眼界会开阔很多。</li>
+<h1 id="不一样的Docker"><a href="#不一样的Docker" class="headerlink" title="不一样的Docker"></a>不一样的Docker</h1><p>我这里也只能很简单的列一下目前这个阶段我们很容发现的几点：</p>
+<ul>
+<li>docker image的体积非常的小，注意看下之前我们用到的几个image的size，一个完整功能的ubuntu才100多mb。docker image如此小的体积，让我们可以方便的在网络上传输和分享，对于公司来说就提供了对大量image的管理和分发的可能。</li>
+<li>docker的系统启动的耗时为0.如果大家已经尝试启动hello-world就知道，<code>docker run hello-world</code>的命令是瞬间完成的，你并没有感觉到加载image、启动系统的耗时，命令完成后就直接输出了结果。程序执行完成后container也跟着关闭，也并没有保存镜像的时间，但下次再运行还是会保留你处理过的状态。</li>
+<li>docker系统占用的资源极少，我们知道如果我们开启了一个VM的系统，不论是linux还是windows，就算什么都不运行也会占用一部分内存，但docker container启动后如果不运行程序，你是看不到系统资源被占用的。</li>
 </ul>
-<h2 id="接下来应该怎么做？"><a href="#接下来应该怎么做？" class="headerlink" title="接下来应该怎么做？"></a>接下来应该怎么做？</h2><p>Hexo 是一个简单地、轻量地、基于Node的一个静态博客框架，可以方便的生成静态网页托管在github。我们要使用Github Pages + Hexo搭建博客站点，就必须注册Github账号，安装git、node.js以及hexo等，接下来就一起来实践吧！</p>
-<h2 id="Github注册与配置"><a href="#Github注册与配置" class="headerlink" title="Github注册与配置"></a>Github注册与配置</h2><h3 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h3><p>如果你还没有自己的Github账号，那请到Github官网注册账号：<a href="https://github.com/" target="_blank" rel="noopener">https://github.com/</a><br>注册成功后github会发送验证邮件到你的邮箱，请查收邮件并进行验证。</p>
-<h3 id="新建版本库"><a href="#新建版本库" class="headerlink" title="新建版本库"></a>新建版本库</h3><p>注册完成后，点击Start a project来新建一个版本库<br><img src="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%931.png" alt="新建版本库1"></p>
-<p>如果你已经注册，则在自己的主页，点击”New repository”，即可新建一个版本库</p>
-<p><img src="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%932.png" alt="新建版本库2"></p>
-<p>输入Repository name:yourname.github.io(yourname与你的注册用户名一致,这个就是你博客的域名了)</p>
-<h3 id="启用GitHub-Page"><a href="#启用GitHub-Page" class="headerlink" title="启用GitHub Page"></a>启用GitHub Page</h3><p>进入版本库后，点击右上方的setting</p>
-<p><img src="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%9333.png" alt="新建版本库3"></p>
-<p>来到Githubs pages栏目，点击Choose a theme</p>
-<p><img src="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%934.png" alt="新建版本库4"></p>
-<p>最后点击”Publish page”,发布github默认生成的一个静态站点</p>
-<p><img src="http://oxtgpqjno.bkt.clouddn.com/%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%935.png" alt="新建版本库5"></p>
-<p>至此，我们已经配置好了github默认的静态站点，并且可以访问：你的github用户名.github.io测试我们刚刚建立好的站点主页。</p>
-<h2 id="下载并安装Git"><a href="#下载并安装Git" class="headerlink" title="下载并安装Git"></a>下载并安装Git</h2><h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p>根据自己电脑操作系统的位数到git官网下载相应的版本：<a href="https://git-scm.com/download/win" target="_blank" rel="noopener">https://git-scm.com/download/win</a></p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>根据自己的需要安装到相应的路径下，其他的一路点击next即可。</p>
-<h3 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><p>选中桌面图标计算机，右键选择属性，打开左边的高级系统设置，打开弹出窗口的环境变量，找到path进行编辑。<br>找到git的安装目录，将其复制后粘贴到path后面。注意每一个加进来的路径后面都要带英文格式的分号。<br>安装与配置过程可参考图文教程：<a href="http://jingyan.baidu.com/article/9f7e7ec0b17cac6f2815548d.html" target="_blank" rel="noopener">git的安装和配置</a></p>
-<h3 id="测试是否安装成功"><a href="#测试是否安装成功" class="headerlink" title="测试是否安装成功"></a>测试是否安装成功</h3><p>windows+R输入cmd打开命令提示符窗口，输入如下命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git --version</span><br></pre></td></tr></table></figure>
-<p>若安装成功会打印出本机安装的git的版本。</p>
-<h3 id="添加SSH-KEY到Github"><a href="#添加SSH-KEY到Github" class="headerlink" title="添加SSH KEY到Github"></a>添加SSH KEY到Github</h3><p>Git是分布式的代码管理器，远程的代码管理是基于SSH的，所以要使用远程的Git则需要SSH的配置。Github的SSH配置步骤如下：</p>
-<h4 id="1-设置Git-user的name和email："><a href="#1-设置Git-user的name和email：" class="headerlink" title="1 设置Git user的name和email："></a>1 设置Git user的name和email：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git config --global user.name <span class="string">"your user name"</span></span><br><span class="line">$ git config --global user.email <span class="string">"your email address"</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="2-生成SSH密钥："><a href="#2-生成SSH密钥：" class="headerlink" title="2 生成SSH密钥："></a>2 生成SSH密钥：</h4><h5 id="2-1-检查-ssh-密钥是否已存在"><a href="#2-1-检查-ssh-密钥是否已存在" class="headerlink" title="2.1 检查 ssh 密钥是否已存在"></a>2.1 检查 ssh 密钥是否已存在</h5><p>查看C:\Users\YourUserName.ssh是否存在<br>如果该文件夹存在，则说明密钥已存在，则备份删除</p>
-<h5 id="2-2-生成-ssh-密钥"><a href="#2-2-生成-ssh-密钥" class="headerlink" title="2.2 生成 ssh 密钥"></a>2.2 生成 ssh 密钥</h5><p>在命令行中输入</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C “your email address”</span><br></pre></td></tr></table></figure>
-<p>连续按3个回车（密码默认为空），得到 id_rsa 和 id_rsa.pub 文件，说明生成成功。</p>
-<h4 id="3-添加密钥到-Github"><a href="#3-添加密钥到-Github" class="headerlink" title="3 添加密钥到 Github"></a>3 添加密钥到 Github</h4><p>打开 <a href="https://github.com/" target="_blank" rel="noopener">Github</a>，登录自己的账号后<br>点击自己的头像-&gt;settings-&gt;SSH Keys-&gt;Add SSH key<br>将本地 id_rsa.pub 中的内容粘贴到 Key 文本框中，随意输入一个 title，点击 Add Key 即可。</p>
-<h4 id="4-测试"><a href="#4-测试" class="headerlink" title="4 测试"></a>4 测试</h4><p>在命令行中输入</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh git@github.com</span><br></pre></td></tr></table></figure>
-<p>会出现如下询问：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Are you sure you want to continue connecting (yes&#x2F;no)?</span><br></pre></td></tr></table></figure>
-<p>键入yes后回车，如果出现：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hi xxx! You’ve successfully authenticated, but GitHub does not provide shell accessConnection to github.com closed.</span><br></pre></td></tr></table></figure>
-<p>则说明验证成功，否则可能是上述步骤中的其中几步出错了，需重新来过。</p>
-<h2 id="下载并安装node-js"><a href="#下载并安装node-js" class="headerlink" title="下载并安装node.js"></a>下载并安装node.js</h2><h3 id="下载-1"><a href="#下载-1" class="headerlink" title="下载"></a>下载</h3><p>根据自己电脑操作系统的位数到git官网下载相应的版本：<a href="https://nodejs.org/en/download/" target="_blank" rel="noopener">https://nodejs.org/en/download/</a></p>
-<h3 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h3><p>根据自己的需要安装到响应的地方，其他的一路点击next即可</p>
-<h3 id="配置环境变量-1"><a href="#配置环境变量-1" class="headerlink" title="配置环境变量"></a>配置环境变量</h3><p>选中桌面图标计算机，右键选择属性，打开左边的高级系统设置，打开弹出窗口的环境变量，找到path进行编辑。</p>
-<p>找到node.js的安装目录，将其复制后粘贴到path后面。注意每一个加进来的路径后面都要带英文格式的分号。</p>
-<h3 id="测试是否安装成功-1"><a href="#测试是否安装成功-1" class="headerlink" title="测试是否安装成功"></a>测试是否安装成功</h3><p>windows+R输入cmd打开命令提示符窗口，输入如下命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
-<p>若安装成功会打印出本机安装的node.js的版本。</p>
-<h2 id="下载并安装Hexo"><a href="#下载并安装Hexo" class="headerlink" title="下载并安装Hexo"></a>下载并安装Hexo</h2><p>hexo是基于node.js的静态博客，官网也是搭建在GitHub上。</p>
-<h3 id="安装-2"><a href="#安装-2" class="headerlink" title="安装"></a>安装</h3><p>在你喜欢的路径下新建一个文件夹blog，用来存放博客的文件，在此文件夹中右键打开Git Bash</p>
-<p>输入如下指令进行安装：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
-<p>如果执行这条命令时长时间未成功，那么请先使用下面的命令将npm镜像源更改为国内的镜像，再执行上面的安装命令，因为国外的镜像源很有可能被墙了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm config <span class="built_in">set</span> registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
-<p>初始化hexo</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init hexo</span><br></pre></td></tr></table></figure>
-<p>这里会将Github上的hexo项目clone下来，得到hexo文件夹。<br>初始化成功后会在最后打印一行：INFO Start blogging with Hexo!</p>
-<h3 id="安装依赖文件"><a href="#安装依赖文件" class="headerlink" title="安装依赖文件"></a>安装依赖文件</h3><p>进入到hexo文件夹</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> hexo</span><br></pre></td></tr></table></figure>
-<p>安装依赖文件：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
-<p>部署形成文件：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>本地测试：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>下图所示则表示搭建成功了：<br><img src="http://oxtgpqjno.bkt.clouddn.com/hexo-s.png" alt="enter image description here"><br>在浏览器输入：<a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/ </a>即可访问到我们搭建好的hexo站点。<br><img src="http://oxtgpqjno.bkt.clouddn.com/hexo-first.png" alt="enter image description here"></p>
-<h2 id="将本地hexo项目托管到Github"><a href="#将本地hexo项目托管到Github" class="headerlink" title="将本地hexo项目托管到Github"></a>将本地hexo项目托管到Github</h2><h3 id="将本地hexo项目托管到Github-1"><a href="#将本地hexo项目托管到Github-1" class="headerlink" title="将本地hexo项目托管到Github"></a>将本地hexo项目托管到Github</h3><h4 id="修改全局配置文件-config-yml"><a href="#修改全局配置文件-config-yml" class="headerlink" title="修改全局配置文件_config.yml"></a>修改全局配置文件_config.yml</h4><blockquote>
-<p><strong>说明：</strong>hexo文件夹下一个_config.yml，我们称之为全局配置文件，在每个主题文件夹内还会有一个_config.yml文件，我们称之为主题配置文件。</p>
-</blockquote>
-<p>用sublime text3或者notepad++等编辑器打开hexo文件夹下的_config.yml文件。</p>
-<blockquote>
-<p><strong>注意：</strong>配置文件中每个字段后面的冒号是英文格式的，且在其后要加一个空格再写值。</p>
-</blockquote>
-<p>编辑最后面的deploy属性，加入代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">type: git</span><br><span class="line">repository: https:&#x2F;&#x2F;github.com&#x2F;你的Github用户名&#x2F;你的Github用户名.github.io.git</span><br><span class="line">branch: master</span><br></pre></td></tr></table></figure>
-
-<p>type使用是git。</p>
-<p>repository属性改成你的刚才创建仓库git地址。</p>
-<p>分支branch填写master。</p>
-<h4 id="安装hexo-deployer-git插件"><a href="#安装hexo-deployer-git插件" class="headerlink" title="安装hexo-deployer-git插件"></a>安装hexo-deployer-git插件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-
-<h4 id="部署到Github上"><a href="#部署到Github上" class="headerlink" title="部署到Github上"></a>部署到Github上</h4><p>依次执行以下三条命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo clean  <span class="comment">#清除缓存 网页正常情况下可以忽略此条命令</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate  <span class="comment">#生成静态页面至public目录</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy  <span class="comment">#将.deploy目录部署到GitHub</span></span><br></pre></td></tr></table></figure>
-
-<p>执行hexo deploy命令之后，如果最后一行打印出如下信息则表示部署成功：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INFO  Deploy done: git</span><br></pre></td></tr></table></figure>
-<p>然后你再去访问你创建的Github pages地址，也就是：你的Github用名.github.io，即可看到你本地的hexo项目已经被部署到github上去了。此时博客的默认主题是landscape，即上面本地测试时的样子。</p>
-<p>至此，基于Github Pages和Hexo的博客就已经搭建完毕了，至于Hexo站点的配置、主题配置和使用内容甚多，还需要再以后慢慢学习。我的第一篇博客的搭建就讲解到这了。</p>
-
+<p>这些特点是不是完全和VM不同？并且有了这些特点，是不是很多之前没有的应用场景就会产生？比如，我们可以吧一个项目build成一个image，然后方便地分发出去，<strong>别人拿到后也不用关心你的项目需要什么环境或依赖，只要docker run一下就能运行</strong>。而且速度很快，我们可以管理成百上千的container，没有业务处理的时候也不会占用的系统资源。</p>
+<h1 id="Docker是如何做到的"><a href="#Docker是如何做到的" class="headerlink" title="Docker是如何做到的"></a>Docker是如何做到的</h1><p>我们先思考一下，一台服务器给我们开发的项目到底提供了哪些能力让他运行起来呢？cpu、内存、硬盘、网络、操作系统、工具软件还有项目的运行环境（jre等）。当具备了这些能力的机器，我们会说这台机器给项目提供了可以运行的环境。</p>
+<p>我们知道VM技术可以将一台物理机器部署为多台虚拟机器，解决了很多物力资源的浪费以及方便的管理能力。那么VM是怎么做到的呢？关键词：<strong>Hypervisor</strong>，VM在物理机器的操作系统上建立了一个中间软件层Hypervisor，Hypervisor利用物理机器的资源，虚拟出多个新虚拟的硬件环境，这些硬件环境可以共享宿主机的资源。这些新的虚拟的硬件环境，安装操作系统和相应的软件后便形成了一台台的虚拟机器。</p>
+<p>那么Docker有什么不同呢？Docker很聪明的利用linux的一些技术走了一条捷径：Docker选择了和虚拟化完全不同的思路，并不去虚拟化任何硬件，而是对硬件资源在不同的docker container之间做了 <strong>“隔离”</strong> 。隔离使每个docker container之间拥有了不同的环境（硬盘空间、网络、系统的工具包），并且又可以共享需要的硬件资源（cpu、内存、系统内核），达到了和虚拟机能提供的同样的功能。<br><img src="http://oxtgpqjno.bkt.clouddn.com/ba6d92b3ee037c9ed576f47ae5edf091.jpg" alt="此处输入图片的描述"></p>
+<h1 id="Docker入门指南"><a href="#Docker入门指南" class="headerlink" title="Docker入门指南"></a>Docker入门指南</h1>
       
     </div>
     
@@ -606,14 +521,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/02/15/Docker%E7%AC%94%E8%AE%B0/Docker%E5%88%9D%E4%BD%93%E9%AA%8C/" rel="next" title="Docker初体验">
+                <i class="fa fa-chevron-left"></i> Docker初体验
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/02/13/%E5%8D%9A%E5%AE%A2%E7%9A%84%E7%BC%96%E5%86%99%E4%B8%8E%E5%8F%91%E5%B8%83/" rel="prev" title="博客的编写与发布">
-                博客的编写与发布 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/03/01/kubernetes%E7%AC%94%E8%AE%B0/1.Kubernetes%E4%BB%8B%E7%BB%8D/" rel="prev" title="一、Kubernetes 介绍">
+                一、Kubernetes 介绍 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -725,9 +644,9 @@
             
               <div class="site-state-item site-state-posts">
               
-                <a href="/archives/%20%7C%7C%20archive">
+                <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -737,10 +656,10 @@
               
               
               <div class="site-state-item site-state-categories">
-                
-                  <span class="site-state-item-count">2</span>
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">分类</span>
-                
+                </a>
               </div>
             
 
@@ -783,7 +702,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基于GithubPages和Hexo搭建博客"><span class="nav-number">1.</span> <span class="nav-text">基于GithubPages和Hexo搭建博客</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Github-Pages是什么？"><span class="nav-number">1.1.</span> <span class="nav-text">Github Pages是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么-选择GIthub-Pages"><span class="nav-number">1.2.</span> <span class="nav-text">为什么 选择GIthub Pages?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接下来应该怎么做？"><span class="nav-number">1.3.</span> <span class="nav-text">接下来应该怎么做？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Github注册与配置"><span class="nav-number">1.4.</span> <span class="nav-text">Github注册与配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#注册"><span class="nav-number">1.4.1.</span> <span class="nav-text">注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新建版本库"><span class="nav-number">1.4.2.</span> <span class="nav-text">新建版本库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启用GitHub-Page"><span class="nav-number">1.4.3.</span> <span class="nav-text">启用GitHub Page</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载并安装Git"><span class="nav-number">1.5.</span> <span class="nav-text">下载并安装Git</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下载"><span class="nav-number">1.5.1.</span> <span class="nav-text">下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">1.5.2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置环境变量"><span class="nav-number">1.5.3.</span> <span class="nav-text">配置环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试是否安装成功"><span class="nav-number">1.5.4.</span> <span class="nav-text">测试是否安装成功</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加SSH-KEY到Github"><span class="nav-number">1.5.5.</span> <span class="nav-text">添加SSH KEY到Github</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-设置Git-user的name和email："><span class="nav-number">1.5.5.1.</span> <span class="nav-text">1 设置Git user的name和email：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-生成SSH密钥："><span class="nav-number">1.5.5.2.</span> <span class="nav-text">2 生成SSH密钥：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-检查-ssh-密钥是否已存在"><span class="nav-number">1.5.5.2.1.</span> <span class="nav-text">2.1 检查 ssh 密钥是否已存在</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-生成-ssh-密钥"><span class="nav-number">1.5.5.2.2.</span> <span class="nav-text">2.2 生成 ssh 密钥</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-添加密钥到-Github"><span class="nav-number">1.5.5.3.</span> <span class="nav-text">3 添加密钥到 Github</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-测试"><span class="nav-number">1.5.5.4.</span> <span class="nav-text">4 测试</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载并安装node-js"><span class="nav-number">1.6.</span> <span class="nav-text">下载并安装node.js</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下载-1"><span class="nav-number">1.6.1.</span> <span class="nav-text">下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-1"><span class="nav-number">1.6.2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置环境变量-1"><span class="nav-number">1.6.3.</span> <span class="nav-text">配置环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试是否安装成功-1"><span class="nav-number">1.6.4.</span> <span class="nav-text">测试是否安装成功</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载并安装Hexo"><span class="nav-number">1.7.</span> <span class="nav-text">下载并安装Hexo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-2"><span class="nav-number">1.7.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装依赖文件"><span class="nav-number">1.7.2.</span> <span class="nav-text">安装依赖文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#将本地hexo项目托管到Github"><span class="nav-number">1.8.</span> <span class="nav-text">将本地hexo项目托管到Github</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#将本地hexo项目托管到Github-1"><span class="nav-number">1.8.1.</span> <span class="nav-text">将本地hexo项目托管到Github</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#修改全局配置文件-config-yml"><span class="nav-number">1.8.1.1.</span> <span class="nav-text">修改全局配置文件_config.yml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装hexo-deployer-git插件"><span class="nav-number">1.8.1.2.</span> <span class="nav-text">安装hexo-deployer-git插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部署到Github上"><span class="nav-number">1.8.1.3.</span> <span class="nav-text">部署到Github上</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#写在前面"><span class="nav-number">1.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#不一样的Docker"><span class="nav-number">2.</span> <span class="nav-text">不一样的Docker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker是如何做到的"><span class="nav-number">3.</span> <span class="nav-text">Docker是如何做到的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker入门指南"><span class="nav-number">4.</span> <span class="nav-text">Docker入门指南</span></a></li></ol></div>
             
 
           </div>

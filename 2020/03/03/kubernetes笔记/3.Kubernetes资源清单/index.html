@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1. K8S 中的资源K8S种所有的内容都抽象为资源，资源实例化之后，叫做对象">
+<meta property="og:type" content="article">
+<meta property="og:title" content="三、Kubernetes 资源清单">
+<meta property="og:url" content="love70.github.io/2020/03/03/kubernetes%E7%AC%94%E8%AE%B0/3.Kubernetes%E8%B5%84%E6%BA%90%E6%B8%85%E5%8D%95/index.html">
+<meta property="og:site_name" content="love70&#39;s Blog">
+<meta property="og:description" content="1. K8S 中的资源K8S种所有的内容都抽象为资源，资源实例化之后，叫做对象">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200312155010959.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313100715995.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313100959654.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313100407034.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313100909939.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313100909939.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313150959770.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313151709779.png">
+<meta property="og:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313151159888.png">
+<meta property="article:published_time" content="2020-03-03T12:41:00.000Z">
+<meta property="article:modified_time" content="2020-03-29T13:22:14.909Z">
+<meta property="article:author" content="Zheng">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200312155010959.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="love70.github.io/2020/03/03/kubernetes笔记/3.Kubernetes资源清单/"/>
+
+
+
+
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/0f81ff2f.js","daovoice")
+  daovoice('init', {
+      app_id: "9d540936"
+    });
+  daovoice('update');
+  </script>
+
+  <title>三、Kubernetes 资源清单 | love70's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?195e030fc879cff274bb0c66746d14d5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">love70's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Challenge is needed for success.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="love70.github.io/2020/03/03/kubernetes%E7%AC%94%E8%AE%B0/3.Kubernetes%E8%B5%84%E6%BA%90%E6%B8%85%E5%8D%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Zheng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/demo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="love70's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">三、Kubernetes 资源清单</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-03T20:41:00+08:00">
+                2020-03-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index">
+                    <span itemprop="name">Kubernetes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/03/03/kubernetes%E7%AC%94%E8%AE%B0/3.Kubernetes%E8%B5%84%E6%BA%90%E6%B8%85%E5%8D%95/" class="leancloud_visitors" data-flag-title="三、Kubernetes 资源清单">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  11
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="1-K8S-中的资源"><a href="#1-K8S-中的资源" class="headerlink" title="1. K8S 中的资源"></a>1. K8S 中的资源</h1><p>K8S种所有的内容都抽象为资源，资源实例化之后，叫做对象</p>
+<a id="more"></a>
+
+<p>K8S中的资源分类：</p>
+<ul>
+<li><strong>名称空间级</strong>资源（仅在此名称空间下生效）：<ul>
+<li>工作负载型资源(workload)：Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet、Job、CronJob</li>
+<li>服务发现及负载均衡型资源(ServiceDiscovery LoadBalance)：Service、Ingress、…</li>
+<li>配置与存储型资源：Volume（存储卷）、CSI（容器存储接口，可以扩展各种各样的第三方存储卷）</li>
+<li>特殊类型的存储卷：ConfigMap（当配置中心来使用的资源类型）、Secret（保存敏感数据）、DownwardAPI（把外部环境中信息输出给容器）</li>
+</ul>
+</li>
+<li><strong>集群级</strong>资源（在全集群中可见以及被调用）：Namespace、Node、Role、ClusterRole、RoleBinding、ClusterRoleBinding</li>
+<li><strong>元数据型</strong>资源（通过指标进行操作）：HPA、PodTemplate、LimitRange</li>
+</ul>
+<h1 id="2-资源清单"><a href="#2-资源清单" class="headerlink" title="2. 资源清单"></a>2. 资源清单</h1><p>在K8S中，一般使用<strong>yaml</strong>格式的文件来创建符合我们预期期望的Pod，这样的yaml文件我们一般称为<strong>资源清单</strong></p>
+<p><strong>资源清单的常用命令：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kubectl api-version  # 获取apiversion版本信息</span><br><span class="line">kubectl explain xx资源[.xxx]  # 获取资源清单字段设置的帮助文档</span><br><span class="line">kubctl create -f xx.yaml</span><br><span class="line">kubctl apply -f xx.yaml</span><br><span class="line"></span><br><span class="line">kubectl get pod xx.xx.xx -o yaml  # 使用-o参数可以将资源的配置输出</span><br><span class="line"></span><br><span class="line">kubectl describe pod podName  # 查看Pod内的信息</span><br><span class="line">kubectl log podName -c containerName  # 查看containerName容器的日志信息</span><br></pre></td></tr></table></figure>
+
+<p><strong>通过定义清单文件创建Pod：</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-demo</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-1</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">busybox-1</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">busybox:latest</span></span><br><span class="line">      <span class="attr">command:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"/bin/sh"</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"-c"</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"sleep 3600"</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="3-常用字段的解释"><a href="#3-常用字段的解释" class="headerlink" title="3. 常用字段的解释"></a>3. 常用字段的解释</h1><p>必须存在的属性:</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th align="center">字段类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>version</td>
+<td align="center">String</td>
+<td>K8S API的版本，目前基本上是v1，可以用kubectl api-versions命令查询</td>
+</tr>
+<tr>
+<td>kind</td>
+<td align="center">String</td>
+<td>yaml文件定义的资源类型和角色，比如：Pod</td>
+</tr>
+<tr>
+<td>metadata</td>
+<td align="center">Object</td>
+<td>元数据对象，固定值就写metadata</td>
+</tr>
+<tr>
+<td>metadata.name</td>
+<td align="center">String</td>
+<td>元数据对象的名字，这里由我们编写，比如命名Pod的名字</td>
+</tr>
+<tr>
+<td>metadata.namespace</td>
+<td align="center">String</td>
+<td>元数据对象的命名空间，由我们自身定义</td>
+</tr>
+<tr>
+<td>spec</td>
+<td align="center">Object</td>
+<td>详细定义对象，固定值就写Spec</td>
+</tr>
+<tr>
+<td>spec.containers[]</td>
+<td align="center">list</td>
+<td>spec对象的容器列表定义</td>
+</tr>
+<tr>
+<td>spec.containers[].name</td>
+<td align="center">String</td>
+<td>容器的名字</td>
+</tr>
+<tr>
+<td>spec.containers[].iamge</td>
+<td align="center">String</td>
+<td>容器用到的镜像名称</td>
+</tr>
+</tbody></table>
+<h1 id="4-容器生命周期"><a href="#4-容器生命周期" class="headerlink" title="4. 容器生命周期"></a>4. 容器生命周期</h1><p>70：首先kubectl向kube api接口发送指令后，kube api会通过etcd调度kubelet，kubelet去操作对应地CRI，CRI完成容器环境的初始化。初始化过程中会先启动一个pause基础容器（负责网络和存储卷的共享）。接着会运行零个或一个或多个Init C容器进行初始化。Init C初始化，如果错误退出，则根据重启策略重新执行，如果全部都正常运行结束了，则开始进入到Main C的运行。Main C在刚开始运行时，允许执行一个命令；在结束运行时也允许执行一个命令；在执行过程中，可以通过readiness和liveness探针进行检测。只有readiness检测成成功后，Pod才会显示为running和ready。当liveness检测失败时，根据重启策略进行操作。</p>
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200312155010959.png" alt="image-20200312155010959" style="zoom:50%;" />
+
+<h2 id="4-1-Init-容器"><a href="#4-1-Init-容器" class="headerlink" title="4.1 Init 容器"></a>4.1 Init 容器</h2><p>Pod能够具有多个容器，应用运行在容器里面，但是它也可能有<strong>一个或多个先于应用容器启动的Init容器</strong>。</p>
+<p>Init容器与普通的容器非常像，除了以下两点：</p>
+<ul>
+<li><strong>Init容器总是运行到成功完成为止</strong></li>
+<li><strong>每个Init容器都必须在下一个Init容器启动之前完成</strong></li>
+</ul>
+<p>如果Pod的Init容器失败，Kubernetes会不断地重启该Pod，知道Init容器成功为止。然而，如果Pod对应地restartPolicy为Never，它不会重新启动。</p>
+<p><strong>因为Init容器具有与应用程序容器分离的单独镜像，所以它们的启动相关代码具有如下优势：</strong></p>
+<ul>
+<li>它们可以包含并运行使用工具，但是出于安全考虑，是不建议在应用程序容器镜像中包含这些使用工具的。</li>
+<li>它们可以包含使用工具和定制化代码来安装，但是不能出现在应用程序镜像中。例如，创建镜像没必要FROM另一个镜像，只需要在安装过程中使用类似sed、awk、python或dig这样的工具。</li>
+<li>应用程序镜像可以分离出创建和部署的角色，而没有必要联合它们构成一个单独的镜像。</li>
+<li>Init容器使用Linux Namespace，所以相对应用程序容器来说具有不同的文件系统视图。因此，他们能够具有访问Secret的权限，而应用程序则不能。</li>
+<li>它们必须在应用程序容器启动之前运行完成，而应用程序容器是并行运行的，所以Init容器能够提供一种简单的阻塞或延迟应用容器的启动的方法，知道满足了一组先决条件。</li>
+</ul>
+<p>Init模板：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp-pod</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">['sh',</span> <span class="string">'-c'</span><span class="string">,</span> <span class="string">'echo The app is running! &amp;&amp; sleep 3600'</span><span class="string">]</span></span><br><span class="line">  <span class="attr">initContainers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-myservice</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">['sh',</span> <span class="string">'-c'</span><span class="string">,</span> <span class="string">'until nslookup myservice; do echo waiting for myservice; sleep 2; done;'</span><span class="string">]</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">init-mydb</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">['sh',</span> <span class="string">'-c'</span><span class="string">,</span> <span class="string">'until nslookup mydb; do echo waiting fo mydb; sleep 2; done;'</span><span class="string">]</span></span><br></pre></td></tr></table></figure>
+
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313100715995.png" alt="image-20200313100407034" style="zoom:50%;" />
+
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313100959654.png" alt="image-20200313100715995" style="zoom:50%;" />
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myservice</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">9376</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mydb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">9377</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313100407034.png" alt="image-20200313100909939" style="zoom:50%;" /><img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313100909939.png" alt="image-20200313100959654"></p>
+<p><img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313100909939.png" alt="image-20200313100959654"></p>
+<p><strong>特殊说明：</strong></p>
+<ul>
+<li>在Pod启动过程中，Init容器会按顺序在网络和数据卷初始化（pause中完成）之后启动。每个容器必须在下一个容器启动之前成功退出。</li>
+<li>如果由于运行时失败退出，将导致容器启动失败，它会根据Pod的restartPolicy指定的策略进行重试。</li>
+<li>在所有的Init容器没有成功之前，Pod将不会变成Ready状态。Init容器的端口将不会在Service中进行聚集。正在初始化中的Pod处于Pending状态，但应该会将Initializing状态设置为true。</li>
+<li>如果Pod重启，所有Init容器必须重新执行。</li>
+<li>对Init容器spec的修改被限制在容器image字段，修改其他字段都不会生效。更改Init容器的image字段，等价于重启该Pod。（通过kubectl edit pod xxx修改）</li>
+<li>Init容器具有应用容器的所有字段。除了readinessProb，因为Init容器无法定义不同于完成（completion）就绪（readiness）之外的其他状态。这会在验证过程中强制执行。</li>
+<li>在Pod中的每个app和Init容器的名称必须唯一；与任何其他容器共享同一个名字，会在验证时抛出错误。</li>
+</ul>
+<h2 id="4-2-容器探针"><a href="#4-2-容器探针" class="headerlink" title="4.2 容器探针"></a>4.2 容器探针</h2><p>探针是由kubelet对容器执行的定期诊断。要执行诊断，kubelet调用由容器实现的Handler。有三种类型的处理程序：</p>
+<ul>
+<li>ExecAction：在容器内执行指定命令。如果命令退出时返回码为0则认为诊断成功。</li>
+<li>TCPSocketAction：对指定端口上的容器的IP地址进行TCP检查。如果端口打开，则诊断被认为是成功的。</li>
+<li>HTTPGetAction：对指定端口和路径上的容器的IP地址执行HTTP Get请求。如果响应的状态码大于等于200且小于400，则诊断被认为是成功的。</li>
+</ul>
+<p>每次探测都将获得以下三种结果之一：</p>
+<ul>
+<li>成功：容器通过了诊断。</li>
+<li>失败：容器未通过诊断。</li>
+<li>未知：诊断失败，因此不会采取任何行动。</li>
+</ul>
+<p><strong>探测方式：</strong></p>
+<ul>
+<li><strong>livenessProbe：</strong>指示容器是否正在运行。如果存活探测失败，则kubelet会杀死容器，并且容器将受到其重启策略的影响。如果容器不提供存活探针，则默认状态为Success。</li>
+<li><strong>readinessProbe：</strong>指示容器是否准备好服务请求。如果就绪探测失败，端点控制器将从与Pod匹配的所有Service的端点中删除该Pod的IP地址。初始延迟之前的就绪状态默认为Failure。如果容器不提供就绪探针，则默认状态为Success。</li>
+</ul>
+<p><strong>Pod phase：</strong></p>
+<p>Pod的status字段是一个PodStatus对象，PadStatus中有一个phase字段。</p>
+<p>Pod的相位（phase）是Pod在其生命周期中的简单宏观概述。该字段并不是对容器或Pod的综合汇总，也不是为了作为综合状态机。</p>
+<p>Pod相位的数量和含义是严格指定的。除了以下列举的状态外，不应该在假定Pod有其他的phase值。</p>
+<ul>
+<li>挂起（Pending）：Pod已被Kubernetes系统接受，但有一个或者多个容器镜像尚未构建。等待时间包括调度Pod的时间和通过网络下载镜像的时间，这可能需要花点时间。</li>
+<li>运行中（Running）：该Pod已经绑定到了一个节点上，Pod中所有的容器都已被创建。至少有一个容器正在运行，或者正处于启动或重启状态。</li>
+<li>成功（Succeeded）：Pod中的所有容器都被成功终止，并且不会再重启。</li>
+<li>失败（Failed）：Pod中的所有容器都已终止了，并且至少有一个容器是因为失败终止。也就是说，容器以非0状态退出或者被系统终止。</li>
+<li>未知（Unknown）：因为某些原因无法取得Pod的状态，通常是因为与Pod所在的主机通信失败。</li>
+</ul>
+<p><strong>检测探针-就绪检测：</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">readiness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-httpget-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">      <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">      <span class="attr">readinessProbe:</span></span><br><span class="line">        <span class="attr">httpGet:</span></span><br><span class="line">          <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">/index1.html</span></span><br><span class="line">        <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313150959770.png" alt="image-20200313150959770" style="zoom:50%;" />
+
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313151709779.png" alt="image-20200313151159888" style="zoom:50%;" />
+
+<p><strong>检测探针-存活检测：</strong></p>
+<p>疑问：如果同时含有就绪检测和存活检测，这两者有先后顺序吗？就是说必须就绪检测通过后才进行存活检测？因为如果就绪检测卡了一小会，如果存活检测失败那不就要重启了吗？</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-exec-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-exec-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/busybox</span></span><br><span class="line">      <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">["/bin/sh",</span> <span class="string">"-c"</span><span class="string">,</span> <span class="string">"touch /tmp/live; sleep 60; rm -rf /tmp/live; sleep 3600"</span><span class="string">]</span></span><br><span class="line">      <span class="attr">livenessProbe:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> <span class="string">["test",</span> <span class="string">"-e"</span><span class="string">,</span> <span class="string">"/tmp/live"</span><span class="string">]</span></span><br><span class="line">        <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<img src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/image-20200313151159888.png" alt="image-20200313151709779" style="zoom:50%;" />
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-httpget-pod</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness-httpget-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">      <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">          <span class="attr">comtainerPort:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">livenessProbe:</span></span><br><span class="line">        <span class="attr">httpGet:</span></span><br><span class="line">          <span class="attr">port:</span> <span class="string">http</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">/index.html</span></span><br><span class="line">        <span class="attr">initialDelaySeconds:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br><span class="line">        <span class="attr">timeoutSeconds:</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">probe-tcp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">hub.atguigu.com/library/myapp:v1</span></span><br><span class="line">      <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">      <span class="attr">livenessProbe:</span></span><br><span class="line">        <span class="attr">initialDelaySeconds:</span> <span class="number">5</span></span><br><span class="line">        <span class="attr">periodSeconds:</span> <span class="number">3</span></span><br><span class="line">        <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br><span class="line">        <span class="attr">tcpSocket:</span></span><br><span class="line">          <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>启动、退出动作：</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lifecycle-demo</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lifecycle-demo-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">      <span class="attr">lifecycle:</span></span><br><span class="line">        <span class="attr">postStart:</span></span><br><span class="line">          <span class="attr">exec:</span></span><br><span class="line">            <span class="attr">command:</span> <span class="string">["/bin/sh",</span> <span class="string">"-c"</span><span class="string">,</span> <span class="string">"echo Hello from the postStart handler &gt; /usr/share/message"</span><span class="string">]</span></span><br><span class="line">        <span class="attr">preStop:</span></span><br><span class="line">          <span class="attr">exec:</span></span><br><span class="line">            <span class="attr">command:</span> <span class="string">["/bin/sh",</span> <span class="string">"-c"</span><span class="string">,</span> <span class="string">"echo Hello from the preStop handler &gt; /usr/share/message"</span><span class="string">]</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="5-Kubernetes-状态示例"><a href="#5-Kubernetes-状态示例" class="headerlink" title="5. Kubernetes 状态示例"></a>5. Kubernetes 状态示例</h1><p><strong>Pod中只有一个容器并且正在运行，容器成功退出</strong></p>
+<ul>
+<li><p>记录事件完成</p>
+</li>
+<li><p>如果restartPolicy为：</p>
+<ul>
+<li>Always：重启容器；Pod phase仍为Running</li>
+<li>OnFailure：Pod phase变成succeeded</li>
+<li>Never：Pod phase变成succeeded</li>
+</ul>
+</li>
+</ul>
+<p><strong>Pod中只有一个容器并且正在运行，容器退出失败</strong></p>
+<ul>
+<li><p>记录失败事件</p>
+</li>
+<li><p>如果restartPolicy为：</p>
+<ul>
+<li>Always：重启容器；Pod phase仍为Running</li>
+<li>OnFailure：重启容器；Pod phase仍为Running</li>
+<li>Never：Pod phase变成Failed</li>
+</ul>
+</li>
+</ul>
+<p><strong>Pod中有两个容器并且正在运行，容器1退出失败</strong></p>
+<ul>
+<li><p>记录失败事件</p>
+</li>
+<li><p>如果restartPolicy为：</p>
+<ul>
+<li>Always：重启容器；Pod phase仍为Running</li>
+<li>OnFailure：重启容器；Pod phase仍为Running</li>
+<li>Never：不重启容器；Pod phase仍为Running</li>
+</ul>
+</li>
+<li><p>如果有容器1没有处于运行状态，并且容器2退出：</p>
+<ul>
+<li>记录失败事件</li>
+<li>如果restartPolicy为：<ul>
+<li>Always：重启容器；Pod phase仍为Running</li>
+<li>OnFailure：重启容器；Pod phase仍为Running</li>
+<li>Never：Pod phase变成Failed</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Pod中只有一个容器并处于运行状态，容器运行时内存超出限制</strong></p>
+<ul>
+<li><p>容器以失败状态终止</p>
+</li>
+<li><p>记录OOM事件</p>
+</li>
+<li><p>如果restartPolicy为：</p>
+<ul>
+<li>Always：重启容器；Pod phase仍为Running</li>
+<li>OnFailure：重启容器；Pod phase仍为Running</li>
+<li>Never：记录失败事件；Pod phase变成Failed</li>
+</ul>
+</li>
+</ul>
+<p><strong>Pod正在运行，磁盘故障</strong></p>
+<ul>
+<li>杀掉所有容器，记录适当事件</li>
+<li>Pod phase变成Failed</li>
+<li>如果使用控制器来运行，Pod将在别处重建</li>
+</ul>
+<p><strong>Pod正在运行，其节点被分段</strong></p>
+<ul>
+<li>节点控制器等待直到超时</li>
+<li>节点控制器将Pod phase设置为Failed</li>
+<li>如果是用控制器来运行，Pod将在别处重建</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/微信收款码.jpg" alt="Zheng 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/支付宝收款码.jpg" alt="Zheng 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/02/kubernetes%E7%AC%94%E8%AE%B0/2.Kubernetes%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" rel="next" title="二、Kubernets 基础概念">
+                <i class="fa fa-chevron-left"></i> 二、Kubernets 基础概念
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/04/kubernetes%E7%AC%94%E8%AE%B0/4.Kubernetes%E8%B5%84%E6%BA%90%E6%8E%A7%E5%88%B6%E5%99%A8/" rel="prev" title="四、Kubernetes 资源控制器">
+                四、Kubernetes 资源控制器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+  <script>
+    window._bd_share_config = {
+      "common": {
+        "bdText": "",
+        "bdMini": "1",
+        "bdMiniList": false,
+        "bdPic": ""
+      },
+      "image": {
+        "viewList": ["tsina", "douban", "sqq", "qzone", "weixin", "twi", "fbook"],
+        "viewText": "分享到：",
+        "viewSize": "16"
+      },
+      "slide": {
+        "bdImg": "5",
+        "bdPos": "left",
+        "bdTop": "100"
+      }
+    }
+  </script>
+
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDE0OC8xMDY4NQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://blog-love70-img.oss-cn-chengdu.aliyuncs.com/blog.love70.cn/demo.jpg"
+                alt="Zheng" />
+            
+              <p class="site-author-name" itemprop="name">Zheng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/love70" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-K8S-中的资源"><span class="nav-number">1.</span> <span class="nav-text">1. K8S 中的资源</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-资源清单"><span class="nav-number">2.</span> <span class="nav-text">2. 资源清单</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-常用字段的解释"><span class="nav-number">3.</span> <span class="nav-text">3. 常用字段的解释</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-容器生命周期"><span class="nav-number">4.</span> <span class="nav-text">4. 容器生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-Init-容器"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 Init 容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-容器探针"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 容器探针</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-Kubernetes-状态示例"><span class="nav-number">5.</span> <span class="nav-text">5. Kubernetes 状态示例</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zheng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/canvas_lines.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("nB3bSL0ilFthw62j0k6C5CXR-gzGzoHsz", "YhNf2pmy8UbaPT8sUhKasOGI");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
