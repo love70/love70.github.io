@@ -103,7 +103,7 @@
 <meta property="og:site_name" content="love70&#39;s Blog">
 <meta property="og:description" content="1. 调度说明1.1 Scheduler 介绍Scheduler 是 kubernetes 的调度器，主要的任务是把定义的 pod 分配到集群的节点上。听起来非常简单，但有很多要考虑的问题：">
 <meta property="article:published_time" content="2020-03-07T12:41:00.000Z">
-<meta property="article:modified_time" content="2020-03-29T13:27:49.302Z">
+<meta property="article:modified_time" content="2020-03-29T13:44:34.768Z">
 <meta property="article:author" content="Zheng">
 <meta name="twitter:card" content="summary">
 
@@ -569,6 +569,8 @@
 <p>70：如果某个节点如：k8s-node01需要被维护，而 k8s-node01 上运行了很多Pod，如果直接关闭 Node，可能会对网络访问造成一些影响。所以可以先对 k83-node01 打一个 NoExecute 的污点，先将所有的 Pod 驱逐出去，然后再将该节点从集群中清除，再进行维护。（和直接关闭该 Node 的区别在哪儿？）</p>
 <p><strong>Ⅱ、污点的设置、查看和去除</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 设置污点</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl taint nodes k8s-node01 key1=value1:NoSchedule</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 节点说明中，查找 Taints 字段</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl describe node node-name</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 去除污点</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl taint nodes k8s-node01 key1:NoSchedule-</span></span><br></pre></td></tr></table></figure>
+
+
 
 <h2 id="3-3-容忍（Tolerations）"><a href="#3-3-容忍（Tolerations）" class="headerlink" title="3.3 容忍（Tolerations）"></a>3.3 容忍（Tolerations）</h2><p><strong>设置了污点的 Node 将根据 taint 的 effect：NoSchedule、PreferNoSchedule、NoExecute 和 Pod 之间产生互斥的关系，Pod 将在一定程度上不会被调度到 Node 上。 但我们可以在 Pod 上设置容忍 ( Toleration ) ，意思是设置了容忍的 Pod 将可以容忍污点的存在，可以被调度到存在污点的 Node 上。</strong></p>
 <p><strong>pod.spec.tolerations</strong></p>
